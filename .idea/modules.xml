@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SparkREST.iml" filepath="$PROJECT_DIR$/SparkREST.iml" />
+      <module fileurl="file://$PROJECT_DIR$/webprog2022.iml" filepath="$PROJECT_DIR$/webprog2022.iml" />
     </modules>
   </component>
 </project>
