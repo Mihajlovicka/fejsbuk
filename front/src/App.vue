@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <HeaderPart/>
+    <HeaderPart :key="headerComponent"/>
     <router-view></router-view>
   </div>
 </template>
@@ -14,6 +14,16 @@ export default {
   components: {
     HeaderPart,
     // LogIn
+  },
+  data() {
+    return {
+      headerComponent: 0,
+    };
+  },
+  methods: {
+    forceRerender() {
+      this.headerComponent += 1;
+    }
   }
 }
 </script>
