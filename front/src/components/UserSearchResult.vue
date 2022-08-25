@@ -61,7 +61,7 @@
                     </td>
                     <td>
                       <div class="event-wrap">
-                        <h3><router-link to="/userProfile" user="user">{{ user.name }} {{ user.surname }}</router-link></h3>
+                        <h3><router-link :to="{name: 'userProfile', params: {username:user.username}}">{{ user.name }} {{ user.surname }}</router-link></h3>
                         <div class="meta">
                           <div>{{ user.sex }}
                           </div>
@@ -73,7 +73,21 @@
                     </td>
                     <td>
                       <div class="primary-btn">
-                        <a class="btn btn-primary" href="#">Dodaj prijatelja</a>
+                        <button class="btn btn-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus" data-toggle="tooltip" title="" data-original-title="Connect">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                          </svg>
+                        </button></div>
+                      <div class="primary-btn">
+                        <button class="btn btn-icon">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-dash-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11 7.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                          </svg>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -139,7 +153,7 @@ export default {
   },
   created() {
     this.search = this.headerSearch
-    axios.get("/getAllUsers").then(resp => {
+    axios.get('/searchUsers',{params: {start:"", end:"", search:this.headerSearch === "" ? "" : this.headerSearch}}).then(resp => {
       this.users = resp.data;
       this.getPictures();
     })

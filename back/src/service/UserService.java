@@ -18,7 +18,6 @@ public class UserService {
     static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public User login(Map<String, String> userData) throws NotFound, WrongPassword {
-        usersRepo.init();
         User u = usersRepo.getByUsername(userData.get("username"));
         if(u == null) throw new NotFound("user not found");
         if(!u.getPassword().equals(userData.get("password"))) throw new WrongPassword("password wrong");
@@ -89,5 +88,24 @@ public class UserService {
             }
         }
         return found;
+    }
+
+    public User getUser(String username) throws NotFound {
+        User u = usersRepo.getByUsername(username);
+        if(u == null) throw new NotFound("user not found");
+        return u;
+    }
+
+    public User updateUser(User user) throws NotFound {
+        User u =  usersRepo.updateUser(user);
+        if(u == null) throw new NotFound("user not found");
+        return u;
+    }
+
+    public void changePassword(Map<String, String> userData) throws NotFound, WrongPassword {
+        User u = usersRepo.getByUsername(userData.get("username"));
+        if(u == null) throw new NotFound("user not found");
+        if(!u.getPassword().equals(userData.get("old_password"))) throw new WrongPassword("password wrong");
+        usersRepo.changePassword(u.getUsername(), userData.get("new_password"));
     }
 }

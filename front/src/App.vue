@@ -7,13 +7,11 @@
 
 <script>
 import HeaderPart from './components/HeaderPart.vue'
-// import LogIn from "@/components/LogIn";
 
 export default {
   name: 'App',
   components: {
     HeaderPart,
-    // LogIn
   },
   data() {
     return {
@@ -26,7 +24,7 @@ export default {
     },
     search(search){
       this.$router.push({name:'userSearch', params:{headerSearch:search}})
-    }
+    },
   }
 }
 </script>

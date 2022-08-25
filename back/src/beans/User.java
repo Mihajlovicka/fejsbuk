@@ -165,4 +165,5 @@ public class User {
     public void setProfilePrivate(boolean profilePrivate) {
         this.profilePrivate = profilePrivate;
     }
+
 }

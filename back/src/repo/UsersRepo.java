@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -73,6 +74,22 @@ public class UsersRepo {
         return null;
     }
 
+    public User updateUser(User user){
+        for (User u : users){
+            if(u.getUsername().equals(user.getUsername())){
+                u.setName(user.getName());
+                u.setSurname(user.getSurname());
+                u.setEmail(user.getEmail());
+                u.setBirthDate( user.getBirthDate());
+                u.setSex(user.getSex());
+                u.setProfilePrivate(user.isProfilePrivate());
+                saveAll();
+                return u;
+            }
+        }
+        return null;
+    }
+
     public void addUser(User user){
         this.users.add(user);
         saveAll();
@@ -88,4 +105,13 @@ public class UsersRepo {
         }
     }
 
+    public void changePassword(String username, String new_password) {
+        for (User u : users){
+            if(u.getUsername().equals(username)){
+                u.setPassword(new_password);
+                saveAll();
+                return;
+            }
+        }
+    }
 }
