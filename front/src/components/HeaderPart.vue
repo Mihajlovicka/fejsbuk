@@ -6,10 +6,17 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
+
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <div class="navbar-nav mr-auto">
         <ul class="navbar-nav">
-
+          <li>
+            <div class="input-group" style="margin-left: 50px !important;">
+              <input type="search" class="form-control rounded" v-model="search" placeholder="Pretraga" aria-label="Search" aria-describedby="search-addon" />
+              <button type="button" class="btn btn-outline-primary" @click="userSearch">pretraga</button>
+            </div>
+          </li>
         </ul>
       </div>
       <div class="form-inline my-2 my-lg-0" v-if="!loogedin">
@@ -25,11 +32,14 @@
 </template>
 
 <script>
+
 export default {
   name: "HeaderPart",
+
   data(){
     return{
-      loogedin:false
+      loogedin:false,
+      search:"",
     }
   },
   methods:{
@@ -38,6 +48,9 @@ export default {
       this.$parent.forceRerender()
       this.$router.push('/')
     },
+    userSearch(){
+      this.$parent.search(this.search)
+    }
   },
   created(){
     this.loogedin = localStorage.getItem("token") !== null
@@ -46,5 +59,8 @@ export default {
 </script>
 
 <style scoped>
-
+.datepickerclass{
+  width: 30% !important;
+  height: 38px ;
+}
 </style>

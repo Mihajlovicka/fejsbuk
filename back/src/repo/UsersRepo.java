@@ -2,6 +2,8 @@ package repo;
 
 import beans.FriendshipRequest;
 import beans.Post;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 
 import java.io.*;
@@ -19,7 +21,12 @@ import java.util.Date;
 
 public class UsersRepo {
     private static ArrayList<User> users = new ArrayList<>();
-    private final String path = "./webprog2022/files/users.json";
+    private final String path = "./files/users.json";
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    public UsersRepo(){
+        readAll();
+    }
 
     public ArrayList<User> getAll(){
         return this.users;
@@ -27,9 +34,7 @@ public class UsersRepo {
 
     public void readAll(){
         try {
-            String text = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
-            Type listType = new TypeToken<ArrayList<User>>(){}.getType();
-            users = new Gson().fromJson(text, listType);
+            users = objectMapper.readValue(new File(path), new TypeReference<ArrayList<User>>(){});
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,14 +43,7 @@ public class UsersRepo {
     public void saveAll(){
         makeFileIfNotExists();
         try {
-            Gson gson = new GsonBuilder()
-                    .excludeFieldsWithoutExposeAnnotation()
-                    .setDateFormat(DateFormat.FULL).create();
-            String text = gson.toJson(users);
-            FileWriter f = new FileWriter(path);
-            f.write(text);
-            f.flush();
-            f.close();
+            objectMapper.writeValue(new File(path), users);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,10 +51,16 @@ public class UsersRepo {
     }
     public void init(){
         users.clear();
-        User u = new User("msara","123","saram","sara","mihajlovic",new java.util.Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<FriendshipRequest>(),new ArrayList<String>(), true);
+        User u = new User("msara","123","saram","sara","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<FriendshipRequest>(),new ArrayList<String>(), true);
         users.add(u);
-        User u1 = new User("saram@gmail.com","123","saram","sara","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<FriendshipRequest>(),new ArrayList<String>(), true);
+        User u1 = new User("saram@gmail.com","123","saram","mira","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<FriendshipRequest>(),new ArrayList<String>(), true);
         users.add(u1);
+        User u2 = new User("saram@gmail.com","123","saram","nika","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<FriendshipRequest>(),new ArrayList<String>(), true);
+        users.add(u2);
+        User u3 = new User("saram@gmail.com","123","dajana","dajana","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<FriendshipRequest>(),new ArrayList<String>(), true);
+        users.add(u3);
+        User u4 = new User("saram@gmail.com","123","dajana","dajana","ristic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<FriendshipRequest>(),new ArrayList<String>(), true);
+        users.add(u4);
     }
 
     public User getByUsername(String username){

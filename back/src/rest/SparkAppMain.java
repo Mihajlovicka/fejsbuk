@@ -34,6 +34,21 @@ public class SparkAppMain {
 		enableCORS("*", "*", "*");
 
 
+		get("/getAllUsers",(req,res) -> {
+			res.status(200);
+			return objectMapper.writeValueAsString(userService.getAll());
+		});
+
+		get("/searchUsers",(req,res) -> {
+			res.status(200);
+			String startDate = req.queryParams("start");
+			String endDate = req.queryParams("end");
+			String search = req.queryParams("search");
+			ArrayList<User> users = userService.search(startDate, endDate, search == null ? "" : search);
+
+			return objectMapper.writeValueAsString(users);
+		});
+
 		post("/login", (req, res) -> {
 			res.type("application/json");
 			String payload = req.body();

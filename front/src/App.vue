@@ -23,6 +23,9 @@ export default {
   methods: {
     forceRerender() {
       this.headerComponent += 1;
+    },
+    search(search){
+      this.$router.push({name:'userSearch', params:{headerSearch:search}})
     }
   }
 }

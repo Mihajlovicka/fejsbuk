@@ -1,5 +1,7 @@
 package beans;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ public class User {
      private String email;
      private String name;
      private String surname;
+    @JsonFormat
+            (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
      private Date birthDate;
       private String sex;
      private String role;
