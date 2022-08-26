@@ -114,4 +114,14 @@ public class UsersRepo {
             }
         }
     }
+
+    public void changeProfilePhoto(String username, String picture) {
+        for (User u : users){
+            if(u.getUsername().equals(username)){
+                u.setProfilePicture(picture);
+                saveAll();
+                return;
+            }
+        }
+    }
 }

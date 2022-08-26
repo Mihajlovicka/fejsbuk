@@ -108,4 +108,10 @@ public class UserService {
         if(!u.getPassword().equals(userData.get("old_password"))) throw new WrongPassword("password wrong");
         usersRepo.changePassword(u.getUsername(), userData.get("new_password"));
     }
+
+    public void changeProfilePhoto(Map<String, String> userData) throws NotFound {
+        User u = usersRepo.getByUsername(userData.get("username"));
+        if(u == null) throw new NotFound("user not found");
+        usersRepo.changeProfilePhoto(u.getUsername(), userData.get("picture"));
+    }
 }

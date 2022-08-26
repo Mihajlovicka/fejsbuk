@@ -131,6 +131,27 @@ public class SparkAppMain {
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
+
+        post("/changeProfilePhoto", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            Map<String, String> map
+                    = objectMapper.readValue(payload, new TypeReference<Map<String, String>>() {
+            });
+            try {
+                res.status(200);
+                userService.changeProfilePhoto(map);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("success", "Uspesna izmena.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            } catch (NotFound e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen. Doslo je do greske.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
     }
 
     private static void enableCORS(final String origin, final String methods, final String headers) {
