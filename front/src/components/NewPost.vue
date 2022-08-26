@@ -1,6 +1,6 @@
 <template>
-<div class="row">
-    <div class="col-md-12 grid-margin" v-for="post in posts" v-bind:key="post">
+  <div class="row">
+    <div class="col-md-12 grid-margin">
       <div class="card rounded">
         <div class="card-header">
           <div class="d-flex align-items-center justify-content-between">
@@ -8,64 +8,64 @@
               <img class="img-s rounded-circle" :src="profilePicture" alt="">
               <div class="ml-2">
                 <h5>{{user.name}} {{user.surname}}</h5>
+                <p class="tx-11 text-muted">Nova objava</p>
               </div>
-            </div>
-            <div class="dropdown">
-              <button class="btn p-0" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal icon-lg pb-3px">
-                  <circle cx="12" cy="12" r="1"></circle>
-                  <circle cx="19" cy="12" r="1"></circle>
-                  <circle cx="5" cy="12" r="1"></circle>
-                </svg>
-              </button>
-              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                <button class="dropdown-item d-flex align-items-center" @click="deletePost(post)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-meh icon-sm mr-2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="8" y1="15" x2="16" y2="15"></line>
-                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
-                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                  </svg> <span class="">Obrisi</span></button>
-               </div>
             </div>
           </div>
         </div>
         <div class="card-body">
-          <p class="mb-3 tx-14">{{post.description}}</p>
-          <img class="img-fluid" :src="post_images[post.picture]" alt="">
+          <div class="wrapper">
+            <form enctype="multipart/form-data">
+              <div class="form-group d-flex align-items-center" >
+                <textarea class="form-control"  placeholder="Tekst objave..." v-model="new_post" rows="4" cols="50"/>
+              </div>
+
+              <div class="form-group d-flex align-items-center" >
+                <div class="custom-file">
+                  <input type="file" id="newPicture" class="custom-file-input" accept=".jpg,.jpeg,.png">
+                  <label class="custom-file-label" >Izaberi sliku...</label>
+                </div></div>
+              <div class="d-flex justify-content-end" >
+                <button class="btn btn-primary mb-3" type="submit" @click.stop.prevent="newPost">Objavi</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
 import axios from "axios";
 
 export default {
-  name: "UserPosts",
+  name: "NewPost",
   data(){
     return{
       username:this.$route.params.username,
-      user:{name:""},
       profilePicture:'',
-      posts:{},
-      post_images:{}
+      new_post:'',
     }
   },
   methods:{
-    deletePost(post){
-      axios.post('/deletePost',post).then(resp => {
-        this.posts = resp.data
-        this.getPictures();
-        this.profilePicture = this.post_images[this.user.profilePicture]
-        alert("Uspesno brisanje.")
+    newPost(){
+      var picture = document.getElementById("newPicture")
+      if (picture.files.length === 0 && this.new_post === "") {
+        return
+      }
+      let file = picture.files[0]
+      let formData = new FormData();
+      formData.set('file', file);
+      formData.set('text', this.new_post)
+      formData.set('username', this.username)
+      axios.post('/newPost', formData).then(resp => {
+        alert(resp.data.success)
       }).catch(resp => {
         alert(resp.data.error)
       })
     },
-    getPictures() {
+    getPictures(file) {
       var pom = require.context(
           "../assets/pictures/",
           true,
@@ -73,30 +73,21 @@ export default {
       ).keys();
       for (let image of pom) {
         let img_name = image.replace('./', '')
-        if (img_name.split("/")[0] == this.username) {
-          this.post_images[img_name.split('/')[1]] = require("../assets/pictures/" + img_name);
-        }
+        if (img_name.split("/")[1] == file && img_name.split("/")[0] == this.username)
+          return require("../assets/pictures/" + img_name);
       }
     }
   },
   created() {
     axios.get('/getUser',{params: {username:this.username}}).then(resp => {
       this.user = resp.data;
+      this.profilePicture = this.getPictures([this.user.profilePicture]);
     });
-    axios.get('/getPosts',{params: {username:this.username}}).then(resp => {
-      this.posts = resp.data;
-      this.getPictures();
-      this.profilePicture = this.post_images[this.user.profilePicture]
-    });
-
   },
 }
 </script>
 
 <style scoped>
-.img-fluid{
-  max-height: 50vh;
-}
 body{
   background-color: #f9fafb;
   margin-top:20px;}
@@ -305,5 +296,119 @@ img {
   background-clip: border-box;
   border: 1px solid #f2f4f9;
   border-radius: 0.25rem;
+}
+
+.error-message {
+  color: red;
+}
+input:focus {
+  outline: none;
+}
+.error {
+  color:red;
+  border: 1px solid red !important;
+}
+/* Importing fonts from Google */
+/* Reseting */
+
+
+.wrapper {
+  max-width: 450px;
+  margin: 50px auto;
+  padding: 20px 30px;
+  min-height: 300px;
+  background-color: #ffffff27;
+  border-top: 1px solid #ffffff6e;
+  border-left: 1px solid #ffffff6e;
+  border-radius: 15px;
+}
+
+.wrapper .h5 {
+  /*color: #ddd;*/
+}
+
+.wrapper .form-group {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 1.5rem;
+}
+
+.wrapper .form-group:hover {
+  border-bottom: 1px solid #eee;
+}
+
+.wrapper .form-group .icon {
+  /*color: #e8e8e8;*/
+}
+
+.wrapper .form-group .form-control {
+  background: inherit;
+  border: none;
+  border-radius: 0px;
+  box-shadow: none;
+  /*color: #e9e9e9;*/
+}
+
+.wrapper .form-group input::placeholder {
+  /*color: #ccc;*/
+}
+
+.wrapper .form-group input:focus::placeholder {
+  opacity: 0;
+}
+
+.wrapper .form-group .fa-phone {
+  transform: rotate(90deg);
+}
+
+
+.wrapper .btn.btn-primary {
+  position: relative;
+  color: black;
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background-color: inherit;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.wrapper .btn.btn-primary:hover {
+  background-color: #b4b4b433;
+  color: #fff;
+}
+
+.wrapper .btn.btn-primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25px;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.6);
+  transform: skew(45deg) translateX(130px);
+  transition: .5s;
+  opacity: 0;
+}
+
+.wrapper .btn.btn-primary:hover::before {
+  opacity: 1;
+  transform: skew(45deg) translateX(-130px);
+}
+
+@media (max-width: 460px) {
+  .wrapper {
+    margin: 15px;
+    padding: 20px;
+  }
+
+  .wrapper .connect::after {
+    left: 38%;
+  }
+}
+
+@media (max-width: 345px) {
+  .wrapper .connect::after {
+    left: 32%;
+  }
 }
 </style>

@@ -32,6 +32,7 @@ export default {
   name: "GalleryView",
   data() {
     return {
+      username:this.$route.params.username,
       images: [],
       slideIndex: 1,
     }
@@ -72,7 +73,10 @@ export default {
       ).keys();
       for (let image of pom) {
         let img_name = image.replace('./', '')
-        this.images.push(require("../assets/pictures/" + img_name))
+        if(img_name.split('/')[0] == this.username) {
+          img_name = img_name.split('/')[1]
+          this.images.push(require("../assets/pictures/" + this.username + "/" + img_name))
+        }
       }
     }
   },

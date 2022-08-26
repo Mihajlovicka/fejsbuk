@@ -7,7 +7,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import repo.UsersRepo;
+import spark.utils.IOUtils;
 
+import javax.servlet.http.Part;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Key;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,4 +120,6 @@ public class UserService {
         if(u == null) throw new NotFound("user not found");
         usersRepo.changeProfilePhoto(u.getUsername(), userData.get("picture"));
     }
+
+
 }

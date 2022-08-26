@@ -42,7 +42,7 @@ public class UsersRepo {
     }
 
     public void saveAll(){
-        makeFileIfNotExists();
+        makeFileIfNotExists(this.path);
         try {
             objectMapper.writeValue(new File(path), users);
         } catch (IOException e) {
@@ -95,7 +95,7 @@ public class UsersRepo {
         saveAll();
     }
 
-    private void makeFileIfNotExists(){
+    public static void makeFileIfNotExists(String path){
         File myObj = new File(path);
         try {
             if(!myObj.exists())
@@ -103,6 +103,12 @@ public class UsersRepo {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void makeDirectoryIfNotExists(String path){
+        File myObj = new File(path);
+        if(!myObj.exists())
+            myObj.mkdir();
     }
 
     public void changePassword(String username, String new_password) {

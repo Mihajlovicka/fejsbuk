@@ -13,9 +13,17 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import repo.UsersRepo;
+import service.PostService;
 import service.UserService;
 import spark.Filter;
+import spark.utils.IOUtils;
 
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.Part;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,6 +36,7 @@ public class SparkAppMain {
 
     static ObjectMapper objectMapper = new ObjectMapper();
     static UserService userService = new UserService();
+    static PostService postService = new PostService();
 
     public static void main(String[] args) throws Exception {
         port(8080);
@@ -54,6 +63,7 @@ public class SparkAppMain {
             }
 
         });
+
 
         get("/searchUsers", (req, res) -> {
             res.status(200);
@@ -151,6 +161,65 @@ public class SparkAppMain {
                 error.put("error", "Korisnik nije pronadjen. Doslo je do greske.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
+        });
+
+        post("/newPost", (req, res) -> {
+            req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("./front/src/assets/pictures/"));
+            Part filePart = req.raw().getPart("file");
+            String username = req.raw().getParameter("username");
+            String text = req.raw().getParameter("text");
+            try {
+                res.status(200);
+                postService.newPost(filePart, username, text);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("success", "Uspesno dodata nova objava.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            } catch (IOException e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Doslo je do greske prilikom cuvanja slike.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            } catch (NotFound e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Doslo je do greske. Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
+        post("/deletePost", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            Post post
+                    = objectMapper.readValue(payload, Post.class);
+            try {
+                res.status(200);
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost("saram@gmail.com",post));
+            } catch (NotFound e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Doslo je do greske. Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
+        get("/getPosts", (req, res) -> {
+            String username = req.queryParams("username");
+            try {
+                res.status(200);
+                ArrayList<Post> u = postService.getPosts(username);
+                return objectMapper.writeValueAsString(u);
+            } catch (NotFound e) {
+                e.printStackTrace();
+                res.status(404);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+
         });
     }
 

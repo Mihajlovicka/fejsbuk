@@ -10,6 +10,7 @@ import UserProfile from "@/components/UserProfile";
 import ProfileInfoChange from "@/components/ProfileInfoChange";
 import PasswordChange from "@/components/PasswordChange";
 import NewProfilePic from "@/components/NewProfilePic";
+import NewPost from "@/components/NewPost";
 
 Vue.config.productionTip = false
 Vue.use(VueRouter);
@@ -22,6 +23,7 @@ const routes = [
   {path:'/personalInfo', component: ProfileInfoChange, name:'personalInfo', props:true},
   {path:'/passwordChange/:username', component: PasswordChange, name:'passwordChange', props:true},
   {path:'/newProfilePic/:username', component: NewProfilePic, name:'newProfilePic', props:true},
+  {path:'/newPost/:username', component: NewPost, name:'newPost', props:true},
 
 ]
 
