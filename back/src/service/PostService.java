@@ -1,6 +1,7 @@
 package service;
 
 import beans.Post;
+import beans.User;
 import exceptions.NotFound;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -20,13 +21,15 @@ public class PostService {
     private static PostRepo postRepo = new PostRepo();
     private static UserService userService = new UserService();
 
-    public void newPost(Part filePart, String username, String text) throws IOException, NotFound {
-        userService.getUser(username);
+    public void newPost(Part filePart, String text, String auth) throws IOException, NotFound, Exception {
+        User u = userService.getLoggedInUser(auth);
+        if(u == null) throw new NotFound("token not valid");
+        userService.getUser(u.getUsername());
         Post newPost = null;
-        UsersRepo.makeDirectoryIfNotExists("./front/src/assets/pictures/" + username);
+        UsersRepo.makeDirectoryIfNotExists("./front/src/assets/pictures/" + u.getUsername());
         if (filePart.getSubmittedFileName() != null) {
             try (InputStream inputStream = filePart.getInputStream()) {
-                OutputStream outputStream = new FileOutputStream("./front/src/assets/pictures/" + username + "/" + filePart.getSubmittedFileName());
+                OutputStream outputStream = new FileOutputStream("./front/src/assets/pictures/" + u.getUsername() + "/" + filePart.getSubmittedFileName());
                 IOUtils.copy(inputStream, outputStream);
                 outputStream.close();
             }
@@ -35,7 +38,7 @@ public class PostService {
             newPost = new Post("", text, new ArrayList<>());
         }
 
-        postRepo.addPost(newPost, username);
+        postRepo.addPost(newPost, u.getUsername());
     }
 
     public ArrayList<Post> getPosts(String username) throws NotFound {
@@ -43,11 +46,14 @@ public class PostService {
         return postRepo.getByUsername(username);
     }
 
-    public ArrayList<Post> deletePost(String username, Post post) throws NotFound {
+    public ArrayList<Post> deletePost( Post post, String auth) throws NotFound , Exception{
+        User u = userService.getLoggedInUser(auth);
+        if(u == null) throw new NotFound("token not valid");
+        String username = u.getUsername();
         userService.getUser(username);
         postRepo.deletePost(username, post);
         if(userService.getUser(username).getProfilePicture().equals(post.getPicture())){
-            userService.removeProfilePhoto(username);
+            userService.removeProfilePhoto(auth);
         }
         return postRepo.getByUsername(username);
     }

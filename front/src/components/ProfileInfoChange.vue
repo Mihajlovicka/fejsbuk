@@ -81,7 +81,7 @@ export default {
       this.$v.user.$touch();
       if (this.$v.user.$error) return;
 
-      this.user.profilePrivate = this.user.profileVisibility == "private" ? true : false
+      this.user.profilePrivate = this.profileVisibility == "private" ? true : false
       this.user.birthDate = moment(this.birthDate,"yyyy-MM-DD").format('DD-MM-yyyy')
       axios.post('/updateUser',this.user).then(resp => {
         this.user = resp.data;

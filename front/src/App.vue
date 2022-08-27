@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <HeaderPart :key="headerComponent"/>
-    <router-view :key="pageComponent"></router-view>
+    <router-view :key="$route.fullPath"></router-view>
   </div>
 </template>
 
@@ -24,12 +24,15 @@ export default {
       this.headerComponent += 2;
     },
     forceRerenderPage() {
-      this.pageComponent += 2;
+      this.$route.fullPath += 2;
     },
     search(search){
       this.$router.push({name:'userSearch', params:{headerSearch:search}})
     },
   },
+  created() {
+    this.forceRerenderPage()
+  }
 }
 </script>
 

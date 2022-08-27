@@ -80,7 +80,6 @@ public class SparkAppMain {
             }
         });
 
-
         get("/searchUsers", (req, res) -> {
             res.status(200);
             String startDate = req.queryParams("start");
@@ -94,7 +93,7 @@ public class SparkAppMain {
                 if (u != null)
                     new_users.remove(u);
 
-            } catch (NotFound e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return objectMapper.writeValueAsString(new_users);
@@ -132,7 +131,7 @@ public class SparkAppMain {
             });
             try {
                 res.status(200);
-                userService.changePassword(map);
+                userService.changePassword(map, req.headers("Authorization"));
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("succes", "Lozinka uspesno izmenjena.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
@@ -148,6 +147,12 @@ public class SparkAppMain {
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("error", "Stara lozinka je pogresna.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
 
@@ -157,12 +162,18 @@ public class SparkAppMain {
             User u = objectMapper.readValue(payload, User.class);
             try {
                 res.status(200);
-                return objectMapper.writeValueAsString(userService.updateUser(u));
+                return objectMapper.writeValueAsString(userService.updateUser(u, req.headers("Authorization")));
             } catch (NotFound e) {
                 res.status(404);
                 e.printStackTrace();
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("error", "Korisnik nije pronadjen. Doslo je do greske.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
@@ -170,12 +181,11 @@ public class SparkAppMain {
         post("/changeProfilePhoto", (req, res) -> {
             res.type("application/json");
             String payload = req.body();
-            Map<String, String> map
-                    = objectMapper.readValue(payload, new TypeReference<Map<String, String>>() {
-            });
+            String picture
+                    = objectMapper.readValue(payload, String.class);
             try {
                 res.status(200);
-                userService.changeProfilePhoto(map);
+                userService.changeProfilePhoto(picture, req.headers("Authorization"));
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("success", "Uspesna izmena.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
@@ -185,17 +195,22 @@ public class SparkAppMain {
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("error", "Korisnik nije pronadjen. Doslo je do greske.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
 
         post("/newPost", (req, res) -> {
             req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("./front/src/assets/pictures/"));
             Part filePart = req.raw().getPart("file");
-            String username = req.raw().getParameter("username");
             String text = req.raw().getParameter("text");
             try {
                 res.status(200);
-                postService.newPost(filePart, username, text);
+                postService.newPost(filePart, text, req.headers("Authorization"));
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("success", "Uspesno dodata nova objava.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
@@ -211,6 +226,12 @@ public class SparkAppMain {
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("error", "Doslo je do greske. Korisnik nije pronadjen.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
 
@@ -221,12 +242,18 @@ public class SparkAppMain {
                     = objectMapper.readValue(payload, Post.class);
             try {
                 res.status(200);
-                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost("saram@gmail.com", post));
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost(post, req.headers("Authorization")));
             } catch (NotFound e) {
                 res.status(404);
                 e.printStackTrace();
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("error", "Doslo je do greske. Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });

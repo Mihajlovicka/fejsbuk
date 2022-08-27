@@ -23,7 +23,7 @@ export default {
   methods: {
     choosePicture(i) {
       if(confirm("da li ste sigurni da zelite da promenite profilnu sliku?")){
-          axios.post('/changeProfilePhoto',{username:this.username, picture:i}).then( () => {
+          axios.post('/changeProfilePhoto',{picture:i}).then( () => {
             this.$router.push({name:'userProfile',params: {username: this.username}})
           }).catch(resp => {
             alert(resp.response.data.error)

@@ -50,8 +50,6 @@ export default {
     logout(){
       localStorage.removeItem("token")
       localStorage.removeItem("role")
-      this.$parent.forceRerenderHeader()
-      this.$parent.forceRerenderPage()
       this.$router.push('/')
     },
     userSearch(){
@@ -62,7 +60,7 @@ export default {
     this.loogedin = localStorage.getItem("token") !== null;
     axios.get('/getLoggedInUser').then(resp => {
       this.username = resp.data.username
-    })
+    }).catch(() => {})
   }
 }
 </script>

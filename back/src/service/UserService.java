@@ -25,18 +25,16 @@ public class UserService {
     private static UsersRepo usersRepo = new UsersRepo();
     static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    public User getLoggedInUser(String auth) throws NotFound {
+    public User getLoggedInUser(String auth) throws NotFound , Exception{
         System.out.println("Authorization: " + auth);
         if ((auth != null) && (auth.contains("Bearer "))) {
             String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
-            try {
-                Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
-                // ako nije bacio izuzetak, onda je OK
-                System.out.println(claims.getBody().getSubject());
-                return getUser(claims.getBody().getSubject());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
+
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+            // ako nije bacio izuzetak, onda je OK
+            System.out.println(claims.getBody().getSubject());
+            return getUser(claims.getBody().getSubject());
+
         }
         throw new NotFound("no token");
     }
@@ -120,29 +118,30 @@ public class UserService {
         return u;
     }
 
-    public User updateUser(User user) throws NotFound {
-        User u =  usersRepo.updateUser(user);
-        if(u == null) throw new NotFound("user not found");
+    public User updateUser(User user, String auth) throws Exception {
+        User u = getLoggedInUser(auth);
+        if(u == null) throw new NotFound("token not valid");
+        u =  usersRepo.updateUser(user);
         return u;
     }
 
-    public void changePassword(Map<String, String> userData) throws NotFound, WrongPassword {
-        User u = usersRepo.getByUsername(userData.get("username"));
-        if(u == null) throw new NotFound("user not found");
+    public void changePassword(Map<String, String> userData, String auth) throws NotFound, WrongPassword , Exception{
+        User u = getLoggedInUser(auth);
+        if(u == null) throw new NotFound("token not valid");
         if(!u.getPassword().equals(userData.get("old_password"))) throw new WrongPassword("password wrong");
         usersRepo.changePassword(u.getUsername(), userData.get("new_password"));
     }
 
-    public void changeProfilePhoto(Map<String, String> userData) throws NotFound {
-        User u = usersRepo.getByUsername(userData.get("username"));
-        if(u == null) throw new NotFound("user not found");
-        usersRepo.changeProfilePhoto(u.getUsername(), userData.get("picture"));
+    public void changeProfilePhoto(String picture, String auth) throws Exception {
+        User u = getLoggedInUser(auth);
+        if(u == null) throw new NotFound("token not valid");
+        usersRepo.changeProfilePhoto(u.getUsername(), picture);
     }
 
 
-    public void removeProfilePhoto(String username) throws NotFound {
-        User u = usersRepo.getByUsername(username);
-        if(u == null) throw new NotFound("user not found");
+    public void removeProfilePhoto(String auth) throws Exception {
+        User u = getLoggedInUser(auth);
+        if(u == null) throw new NotFound("token not valid");
         usersRepo.changeProfilePhoto(u.getUsername(), "no_image.jpg");
     }
 }

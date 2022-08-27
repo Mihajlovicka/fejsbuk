@@ -66,7 +66,6 @@ export default {
         if (this.$v.passwords.$error) return;
 
         axios.post('/changePassword', {
-          username: this.username,
           new_password: this.passwords.new_one,
           old_password: this.passwords.old_one
         }).then(resp => {

@@ -58,7 +58,6 @@ export default {
       let formData = new FormData();
       formData.set('file', file);
       formData.set('text', this.new_post)
-      formData.set('username', this.username)
       axios.post('/newPost', formData).then(resp => {
         alert(resp.data.success)
       }).catch(resp => {
