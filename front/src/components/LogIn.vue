@@ -9,7 +9,7 @@
         <!-- Email input -->
         <div class="form-outline mb-4">
           <label class="form-label" for="loginName">Korisnicko ime</label>
-          <input type="email" id="loginName" class="form-control" v-model="username"/>
+          <input type="text" id="loginName" class="form-control" v-model="username"/>
 
         </div>
 
@@ -37,7 +37,7 @@
 <!--        </div>-->
 
         <!-- Submit button -->
-        <button type="submit" class="btn btn-primary btn-block mb-4">Uloguj se</button>
+        <button type="submit" class="btn btn-outline-primary btn-block mb-4">Uloguj se</button>
 
         <!-- Register buttons -->
         <div class="text-center">
@@ -62,13 +62,14 @@ export default {
     }
   },
   methods:{
-    login(e){
-      e.preventDefault()
+    login(){
       axios.post("/login",{username:this.username, password:this.password})
       .then(resp => {
         this.errorMessage = "";
         localStorage.setItem("token",resp.data.token)
-        this.$parent.forceRerender()
+        localStorage.setItem("role",resp.data.role)
+        this.$parent.forceRerenderHeader()
+        this.$parent.forceRerenderPage()
         this.$router.push('/homepage')
       }).catch(resp => {
         this.errorMessage = resp.response.data.error;

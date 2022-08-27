@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import exceptions.NotFound;
 import exceptions.WrongPassword;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -61,7 +63,21 @@ public class SparkAppMain {
                 error.put("error", "Korisnik nije pronadjen.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
+        });
 
+        get("/getLoggedInUser", (req, res) -> {
+            String auth = req.headers("Authorization");
+            try {
+                res.status(200);
+                User u = userService.getLoggedInUser(auth);
+                return objectMapper.writeValueAsString(u);
+            } catch (NotFound e) {
+                e.printStackTrace();
+                res.status(404);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Nema tokena.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
         });
 
 
@@ -70,9 +86,18 @@ public class SparkAppMain {
             String startDate = req.queryParams("start");
             String endDate = req.queryParams("end");
             String search = req.queryParams("search");
+            String auth = req.headers("Authorization");
             ArrayList<User> users = userService.search(startDate, endDate, search == null ? "" : search);
+            ArrayList<User> new_users = (ArrayList<User>) users.clone();
+            try {
+                User u = userService.getLoggedInUser(auth);
+                if (u != null)
+                    new_users.remove(u);
 
-            return objectMapper.writeValueAsString(users);
+            } catch (NotFound e) {
+                e.printStackTrace();
+            }
+            return objectMapper.writeValueAsString(new_users);
         });
 
         post("/login", (req, res) -> {
@@ -196,7 +221,7 @@ public class SparkAppMain {
                     = objectMapper.readValue(payload, Post.class);
             try {
                 res.status(200);
-                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost("saram@gmail.com",post));
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost("saram@gmail.com", post));
             } catch (NotFound e) {
                 res.status(404);
                 e.printStackTrace();

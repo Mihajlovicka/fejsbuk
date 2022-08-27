@@ -17,7 +17,7 @@
                     <span class="profile-name">{{ user.name }} {{ user.surname }}</span>
                   </div>
                   <div>
-                      <button @click="showNewPost = true; showGallery = false;" class="btn btn-primary btn-icon-text btn-edit-profile">
+                      <button v-if="personalProfile" @click="showNewPost = true; showGallery = false;" class="btn btn-primary btn-icon-text btn-edit-profile">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                              class="feather feather-edit btn-icon-prepend">
@@ -73,7 +73,7 @@
               <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between mb-2">
                   <h6 class="tx-11 font-weight-bold mb-0 text-uppercase">O {{ user.name }} {{ user.surname }}</h6>
-                  <div class="dropdown">
+                  <div v-if="personalProfile" class="dropdown">
                     <button class="btn p-0" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -131,7 +131,7 @@
 
         <div class="mySlidesProfile" id="profPic">
           <div class="options">
-            <div class="dropdown">
+            <div v-if="personalProfile" class="dropdown">
               <button class="btn p-0" type="button" id="dropdownMenuButtonPicture" data-toggle="dropdown"
                       aria-haspopup="true" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -188,6 +188,7 @@ export default {
   data() {
     return {
       username: this.$route.params.username,
+      personalProfile:false,
       profilePicture: '',
       user: Object,
       post:{description:''},
@@ -236,10 +237,17 @@ export default {
     }
   },
   created() {
+    this.personalProfile = false;
     axios.get('/getUser', {params: {username: this.username}}).then(resp => {
       this.user = resp.data;
+      this.username = this.user.username
       this.profilePicture = this.getPictures([this.user.profilePicture]);
     })
+    axios.get('/getLoggedInUser').then(resp => {
+      if(resp.data.username === this.username)
+        this.personalProfile = true;
+    });
+
   }
 }
 </script>

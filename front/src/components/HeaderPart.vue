@@ -24,7 +24,8 @@
         <router-link class="nav-link"  to="/login">Prijava</router-link>
       </div>
       <div class="form-inline my-2 my-lg-0" v-if="loogedin">
-        <button class="nav-link" @click="logout" >Odjava</button>
+        <router-link class="nav-link" :to="{name: 'userProfile', params: {username:username}}">Profil</router-link>
+        <a class="nav-link" href="" @click="logout" >Odjava</a>
       </div>
     </div>
   </nav>
@@ -33,6 +34,8 @@
 
 <script>
 
+import axios from "axios";
+
 export default {
   name: "HeaderPart",
 
@@ -40,20 +43,26 @@ export default {
     return{
       loogedin:false,
       search:"",
+      username:"",
     }
   },
   methods:{
     logout(){
       localStorage.removeItem("token")
-      this.$parent.forceRerender()
+      localStorage.removeItem("role")
+      this.$parent.forceRerenderHeader()
+      this.$parent.forceRerenderPage()
       this.$router.push('/')
     },
     userSearch(){
       this.$parent.search(this.search)
-    }
+    },
   },
   created(){
-    this.loogedin = localStorage.getItem("token") !== null
+    this.loogedin = localStorage.getItem("token") !== null;
+    axios.get('/getLoggedInUser').then(resp => {
+      this.username = resp.data.username
+    })
   }
 }
 </script>

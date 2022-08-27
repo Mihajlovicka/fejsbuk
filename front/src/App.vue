@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <HeaderPart :key="headerComponent"/>
-    <router-view></router-view>
+    <router-view :key="pageComponent"></router-view>
   </div>
 </template>
 
@@ -16,16 +16,20 @@ export default {
   data() {
     return {
       headerComponent: 0,
+      pageComponent:1,
     };
   },
   methods: {
-    forceRerender() {
-      this.headerComponent += 1;
+    forceRerenderHeader() {
+      this.headerComponent += 2;
+    },
+    forceRerenderPage() {
+      this.pageComponent += 2;
     },
     search(search){
       this.$router.push({name:'userSearch', params:{headerSearch:search}})
     },
-  }
+  },
 }
 </script>
 

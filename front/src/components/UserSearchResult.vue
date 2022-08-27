@@ -71,7 +71,7 @@
                       </div>
                     </td>
                     <td>
-                      <div class="primary-btn">
+                      <div v-if="loggedIn" class="primary-btn">
                         <button class="btn btn-icon">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus" data-toggle="tooltip" title="" data-original-title="Connect">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -80,7 +80,7 @@
                             <line x1="23" y1="11" x2="17" y2="11"></line>
                           </svg>
                         </button></div>
-                      <div class="primary-btn">
+                      <div v-if="loggedIn" class="primary-btn">
                         <button class="btn btn-icon">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-dash-fill" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M11 7.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
@@ -116,6 +116,7 @@ export default {
   data() {
     return {
       users: [],
+      loggedIn:false,
       search:"",
       selectedDate:null,
       images:[],
@@ -143,7 +144,6 @@ export default {
       for(let k of this.users){
         imgs[k.username] = k.profilePicture;
       }
-      console.log(imgs)
       var pom = require.context(
           "../assets/pictures/",
           true,
@@ -157,10 +157,10 @@ export default {
     }
   },
   created() {
+    this.loggedIn = localStorage.getItem("token") !== null
     this.search = this.headerSearch
     axios.get('/searchUsers',{params: {start:"", end:"", search:this.headerSearch === "" ? "" : this.headerSearch}}).then(resp => {
       this.users = resp.data;
-      // console.log(this.users)
       this.getPictures();
     })
   },

@@ -10,7 +10,7 @@
                 <h5>{{user.name}} {{user.surname}}</h5>
               </div>
             </div>
-            <div class="dropdown">
+            <div v-if="$parent.personalProfile" class="dropdown">
               <button class="btn p-0" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal icon-lg pb-3px">
                   <circle cx="12" cy="12" r="1"></circle>

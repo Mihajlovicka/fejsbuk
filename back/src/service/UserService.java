@@ -3,6 +3,8 @@ package service;
 import beans.User;
 import exceptions.NotFound;
 import exceptions.WrongPassword;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -22,6 +24,22 @@ import java.util.*;
 public class UserService {
     private static UsersRepo usersRepo = new UsersRepo();
     static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    public User getLoggedInUser(String auth) throws NotFound {
+        System.out.println("Authorization: " + auth);
+        if ((auth != null) && (auth.contains("Bearer "))) {
+            String jwt = auth.substring(auth.indexOf("Bearer ") + 7);
+            try {
+                Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt);
+                // ako nije bacio izuzetak, onda je OK
+                System.out.println(claims.getBody().getSubject());
+                return getUser(claims.getBody().getSubject());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        throw new NotFound("no token");
+    }
 
     public User login(Map<String, String> userData) throws NotFound, WrongPassword {
         User u = usersRepo.getByUsername(userData.get("username"));
