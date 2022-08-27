@@ -1,4 +1,4 @@
-<template>
+<template >
   <div>
     <div class="container">
       <div class="profile-page tx-13">
@@ -16,7 +16,7 @@
                     <img class="profile-pic" :src="profilePicture" alt="profile" @click="showProfilePicture">
                     <span class="profile-name">{{ user.name }} {{ user.surname }}</span>
                   </div>
-                  <div class="d-none d-md-block">
+                  <div>
                       <button @click="showNewPost = true; showGallery = false;" class="btn btn-primary btn-icon-text btn-edit-profile">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -127,10 +127,10 @@
     </div>
     <div id="profilePicModal" class="modal">
       <span class="close cursor" @click="closeModal()">&times;</span>
-      <div class="modal-content">
+      <div class="modal-content d-flex justify-content-around mb-2">
 
         <div class="mySlidesProfile" id="profPic">
-          <div class="options ">
+          <div class="options">
             <div class="dropdown">
               <button class="btn p-0" type="button" id="dropdownMenuButtonPicture" data-toggle="dropdown"
                       aria-haspopup="true" aria-expanded="false">
@@ -151,12 +151,22 @@
                   </svg>
                   <span class=""><router-link :to="{name:'newProfilePic', params:{username:username}}">Izaberi profilnu fotografiju</router-link></span>
                 </div>
+                <div class="dropdown-item d-flex align-items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                       class="feather feather-edit-2 icon-sm mr-2">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                  </svg>
+                  <span class=""><button @click="deletePost()">Izbrisi objavu</button></span>
+                </div>
               </div>
             </div>
           </div>
-          <img :src="profilePicture" style="max-width:600px; height: 70vh;">
-        </div>
 
+          <img id="modelPicture" style="max-width:600px; height: 70vh;">
+
+        </div>
+        <div class="description"><h5>{{post.description}}</h5></div>
       </div>
     </div>
   </div>
@@ -178,18 +188,39 @@ export default {
   data() {
     return {
       username: this.$route.params.username,
-      profilePicture: "",
+      profilePicture: '',
       user: Object,
+      post:{description:''},
       showNewPost:false,
       showGallery:false,
+
     }
   },
   methods: {
     showProfilePicture() {
       document.getElementById("profilePicModal").style.display = "block";
       document.getElementById("profPic").style.display = "block";
+      document.getElementById("modelPicture").src = this.profilePicture;
+      axios.get('/getPost',{params: {username:this.username, picture:this.user.profilePicture}}).then(resp => {
+        this.post = resp.data;
+      }).catch(resp => {
+        alert(resp.data.error)
+      });
+
     }, closeModal() {
       document.getElementById("profilePicModal").style.display = "none";
+    },deletePost(){
+      axios.post('/deletePost',this.post).then(() => {
+        alert("Uspesno brisanje.")
+        this.closeModal()
+        this.$forceUpdate();
+      }).catch(resp => {
+        alert(resp.data.error)
+      })
+      axios.get('/getUser', {params: {username: this.username}}).then(resp => {
+        this.user = resp.data;
+        this.profilePicture = this.getPictures(this.user.profilePicture);
+      })
     },
     getPictures(file) {
       var pom = require.context(
@@ -431,7 +462,7 @@ img {
 .modal {
   display: none;
   position: fixed;
-  z-index: 1;
+  z-index: 3;
   padding-top: 100px;
   left: 0;
   top: 0;
@@ -449,6 +480,7 @@ img {
   padding: 0;
   width: 90%;
   max-width: 1200px;
+  /*flex-flow: row; da bude jedno posred drugog*/
 }
 
 /* The Close Button */
@@ -479,5 +511,14 @@ img {
   padding: 8px 12px;
   position: absolute;
   top: 0;
+  right: 0;
+}
+.description {
+  font-size: 12px;
+  padding: 8px 12px;
+  max-width:600px;
+  height: 30vh;
+  margin-top: 50px;
+  left: 0;
 }
 </style>

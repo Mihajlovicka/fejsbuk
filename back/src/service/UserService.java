@@ -122,4 +122,9 @@ public class UserService {
     }
 
 
+    public void removeProfilePhoto(String username) throws NotFound {
+        User u = usersRepo.getByUsername(username);
+        if(u == null) throw new NotFound("user not found");
+        usersRepo.changeProfilePhoto(u.getUsername(), "no_image.jpg");
+    }
 }

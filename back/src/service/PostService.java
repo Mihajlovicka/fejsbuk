@@ -46,6 +46,17 @@ public class PostService {
     public ArrayList<Post> deletePost(String username, Post post) throws NotFound {
         userService.getUser(username);
         postRepo.deletePost(username, post);
+        if(userService.getUser(username).getProfilePicture().equals(post.getPicture())){
+            userService.removeProfilePhoto(username);
+        }
         return postRepo.getByUsername(username);
+    }
+
+    public Post getPost(String username, String picture) throws NotFound {
+        for(Post p : getPosts(username)){
+            if(p.getPicture().equals(picture))
+                return p;
+        }
+        throw new NotFound("Objava nije pronadjena.");
     }
 }

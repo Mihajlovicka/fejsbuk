@@ -53,18 +53,17 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr class="inner-box" v-for="user in filteredOffers" :key="user">
+                  <tr class="inner-box" v-for="user in filteredOffers" :key="user.username">
                     <td>
                       <div class="event-img">
-                        <img :src="images[user.profilePicture]" alt=""/>
+                        <img :src="images[user.username]" alt=""/>
                       </div>
                     </td>
                     <td>
                       <div class="event-wrap">
                         <h3><router-link :to="{name: 'userProfile', params: {username:user.username}}">{{ user.name }} {{ user.surname }}</router-link></h3>
                         <div class="meta">
-                          <div>{{ user.sex }}
-                          </div>
+
                           <div>
                             <span>{{ user.birthDate | dateViewFilter}}</span>
                           </div>
@@ -140,6 +139,11 @@ export default {
       })
     },
     getPictures(){
+      let imgs = {}
+      for(let k of this.users){
+        imgs[k.username] = k.profilePicture;
+      }
+      console.log(imgs)
       var pom = require.context(
           "../assets/pictures/",
           true,
@@ -147,7 +151,8 @@ export default {
       ).keys();
       for (let image of pom){
         let img_name = image.replace('./','')
-        this.images[img_name] = require("../assets/pictures/"+ img_name);
+        if(imgs[img_name.split('/')[0]] == img_name.split('/')[1])
+          this.images[img_name.split('/')[0]] = require("../assets/pictures/"+ img_name);
       }
     }
   },
@@ -155,6 +160,7 @@ export default {
     this.search = this.headerSearch
     axios.get('/searchUsers',{params: {start:"", end:"", search:this.headerSearch === "" ? "" : this.headerSearch}}).then(resp => {
       this.users = resp.data;
+      // console.log(this.users)
       this.getPictures();
     })
   },

@@ -221,6 +221,23 @@ public class SparkAppMain {
             }
 
         });
+
+        get("/getPost", (req, res) -> {
+            String username = req.queryParams("username");
+            String picture = req.queryParams("picture");
+            try {
+                res.status(200);
+
+                return objectMapper.writeValueAsString(postService.getPost(username, picture));
+            } catch (NotFound e) {
+                e.printStackTrace();
+                res.status(404);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+
+        });
     }
 
     private static void enableCORS(final String origin, final String methods, final String headers) {
