@@ -1,5 +1,7 @@
 package service;
 
+import beans.FriendshipRequest;
+import beans.RequestState;
 import beans.User;
 import exceptions.NotFound;
 import exceptions.WrongPassword;
@@ -8,6 +10,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import repo.FriendshipRequestsRepo;
 import repo.UsersRepo;
 import spark.utils.IOUtils;
 
@@ -23,6 +26,7 @@ import java.util.*;
 
 public class UserService {
     private static UsersRepo usersRepo = new UsersRepo();
+    private static FriendshipRequestsRepo friendshipRequestsRepo = new FriendshipRequestsRepo();
     static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public User getLoggedInUser(String auth) throws NotFound , Exception{
@@ -155,5 +159,20 @@ public class UserService {
         User u = getLoggedInUser(auth);
         if(u == null) throw new NotFound("token not valid");
         usersRepo.changeProfilePhoto(u.getUsername(), "no_image.jpg");
+    }
+
+    public User addFriend(User u, String auth) throws Exception {
+        User sender = getLoggedInUser(auth);
+        if(sender == null) throw new NotFound("token not valid");
+        User reciever = getUser(u.getUsername());
+        if(reciever == null) throw new NotFound("User doesnt exist");
+        FriendshipRequest request = new FriendshipRequest();
+        request.setSender(sender);
+        request.setReceiver(reciever);
+        request.setState(RequestState.OnHold);
+        request.setDate(new javaxt.utils.Date());
+        friendshipRequestsRepo.addNewRequest(request);
+        usersRepo.addFriendRequest(request);
+        return getUser(sender.getUsername());
     }
 }

@@ -26,6 +26,15 @@
                         </svg>
                         Nova objava
                       </button>
+                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile" @click="sendFriendRequest()">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus" data-toggle="tooltip" title="" data-original-title="Connect">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                      </svg>
+                      Dodaj prijatelja
+                    </button>
                     </div>
                 </div>
               </div>
@@ -194,10 +203,19 @@ export default {
       post:{description:''},
       showNewPost:false,
       showGallery:false,
-
+      logged_username: ''
     }
   },
   methods: {
+    sendFriendRequest(){
+      axios.post('/addFriend',this.user).then(() => {
+        alert("Uspesno poslat zahtev za prijateljstvo.")
+
+        this.$forceUpdate();
+      }).catch(resp => {
+        alert(resp.data.error)
+      })
+    },
     showProfilePicture() {
       document.getElementById("profilePicModal").style.display = "block";
       document.getElementById("profPic").style.display = "block";
@@ -244,6 +262,8 @@ export default {
       this.profilePicture = this.getPictures([this.user.profilePicture]);
     })
     axios.get('/getLoggedInUser').then(resp => {
+      this.logged_username = resp.data.username;
+      console.log(resp.data);
       if(resp.data.username === this.username)
         this.personalProfile = true;
     });
@@ -253,6 +273,14 @@ export default {
 </script>
 
 <style scoped>
+.addFriend{
+  color:black;
+  border:none;
+}
+.addFriend:hover{
+   color:white;
+
+ }
 body {
   background-color: #f9fafb;
   margin-top: 20px;

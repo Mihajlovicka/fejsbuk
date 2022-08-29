@@ -1,11 +1,14 @@
 package beans;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import javaxt.utils.Date;
 
 public class FriendshipRequest {
     private User sender;
     private User receiver;
     private RequestState state;
+    @JsonFormat
+            (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private Date date;
 
     public FriendshipRequest() {

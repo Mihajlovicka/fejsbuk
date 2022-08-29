@@ -1,1 +1,55 @@
-[{"username":"msara","password":"123","email":"saram@gmail.com","name":"sara","surname":"milovanovic","birthDate":"17-08-2000","sex":"n","role":"admin","profilePicture":"no_image.jpg","posts":[],"pictures":[],"friendshipRequests":[],"friendships":[],"profilePrivate":false,"token":null},{"username":"srki","password":"s","email":"srki0505@gmail.com","name":"Srdjan","surname":"Mihajlovic","birthDate":"05-05-2000","sex":"m","role":"user","profilePicture":"no_image.jpg","posts":null,"pictures":null,"friendshipRequests":null,"friendships":null,"profilePrivate":false,"token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcmtpIiwiZXhwIjoxNjYxNzQxMzc4LCJpYXQiOjE2NjE3MjMzNzh9.zVBbNDoTfqKGdYD1MqaYj798JMeJauW7TY7UQ4VoLqo"},{"username":"jeca","password":"j","email":"jelenamanojlovic27062000@gmail.com","name":"Jelena","surname":"Manojlovic","birthDate":"27-06-2000","sex":"w","role":"user","profilePicture":"no_image.jpg","posts":null,"pictures":null,"friendshipRequests":null,"friendships":null,"profilePrivate":false,"token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqZWNhIiwiZXhwIjoxNjYxNzQxNjU4LCJpYXQiOjE2NjE3MjM2NTh9.ZfZAIsD8ublvqQ1bHuyAQYH3lifVdX21TGd6FRzuAx4"}]
+[
+  {
+    "username": "msara",
+    "password": "123",
+    "email": "saram@gmail.com",
+    "name": "sara",
+    "surname": "milovanovic",
+    "birthDate": "17-08-2000",
+    "sex": "n",
+    "role": "admin",
+    "profilePicture": "no_image.jpg",
+    "posts": [],
+    "pictures": [],
+    "friendshipRequests": [],
+    "friendships": [],
+    "profilePrivate": false,
+    "token": null
+  },
+  {
+    "username": "srki",
+    "password": "s",
+    "email": "srki0505@gmail.com",
+    "name": "Srdjan",
+    "surname": "Mihajlovic",
+    "birthDate": "05-05-2000",
+    "sex": "m",
+    "role": "user",
+    "profilePicture": "no_image.jpg",
+    "posts": null,
+    "pictures": null,
+    "friendshipRequests": [
+      "msara"
+    ],
+    "friendships": null,
+    "profilePrivate": false,
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcmtpIiwiZXhwIjoxNjYxODAzNDQxLCJpYXQiOjE2NjE3ODU0NDF9.ATpUJy0Br_HktQSsonWp1_beeeJot08kllaJDK9jZfo"
+  },
+  {
+    "username": "jeca",
+    "password": "j",
+    "email": "jelenamanojlovic27062000@gmail.com",
+    "name": "Jelena",
+    "surname": "Manojlovic",
+    "birthDate": "27-06-2000",
+    "sex": "w",
+    "role": "user",
+    "profilePicture": "no_image.jpg",
+    "posts": null,
+    "pictures": null,
+    "friendshipRequests": null,
+    "friendships": null,
+    "profilePrivate": false,
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqZWNhIiwiZXhwIjoxNjYxNzQxNjU4LCJpYXQiOjE2NjE3MjM2NTh9.ZfZAIsD8ublvqQ1bHuyAQYH3lifVdX21TGd6FRzuAx4"
+  }
+]

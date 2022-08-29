@@ -1,0 +1,59 @@
+[
+  {
+    "sender": {
+      "username": "srki",
+      "password": "s",
+      "email": "srki0505@gmail.com",
+      "name": "Srdjan",
+      "surname": "Mihajlovic",
+      "birthDate": "05-05-2000",
+      "sex": "m",
+      "role": "user",
+      "profilePicture": "no_image.jpg",
+      "posts": null,
+      "pictures": null,
+      "friendshipRequests": null,
+      "friendships": null,
+      "profilePrivate": false,
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcmtpIiwiZXhwIjoxNjYxODAzNDQxLCJpYXQiOjE2NjE3ODU0NDF9.ATpUJy0Br_HktQSsonWp1_beeeJot08kllaJDK9jZfo"
+    },
+    "receiver": {
+      "username": "msara",
+      "password": "123",
+      "email": "saram@gmail.com",
+      "name": "sara",
+      "surname": "milovanovic",
+      "birthDate": "17-08-2000",
+      "sex": "n",
+      "role": "admin",
+      "profilePicture": "no_image.jpg",
+      "posts": [],
+      "pictures": [],
+      "friendshipRequests": [],
+      "friendships": [],
+      "profilePrivate": false,
+      "token": null
+    },
+    "state": "OnHold",
+    "date": {
+      "timeZone": "Europe/Belgrade",
+      "year": 2022,
+      "hour": 17,
+      "minute": 4,
+      "second": 8,
+      "calendar": 1661785448112,
+      "time": 1661785448112,
+      "month": 8,
+      "dayOfWeek": 1,
+      "locale": "en_US",
+      "date": 1661785448112,
+      "day": 29,
+      "weekInMonth": 5,
+      "monthName": "August",
+      "weekInYear": 36,
+      "weekdayName": "Monday",
+      "dayInYear": 241,
+      "milliSecond": 112
+    }
+  }
+]

@@ -21,7 +21,7 @@ public class User {
       private String profilePicture; //putanja
     private ArrayList<Post> posts;//ne znam sta ce ovo biti koji tip
      private ArrayList<String> pictures;
-    private ArrayList<FriendshipRequest> friendshipRequests;//lista usernema
+    private ArrayList<String> friendshipRequests;//lista usernema
      private ArrayList<String> friendships;
      private boolean profilePrivate;
     private String token;
@@ -29,7 +29,7 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, String email, String name, String surname, Date birthDate, String sex, String role, String profilePicture, ArrayList<Post> posts, ArrayList<String> pictures, ArrayList<FriendshipRequest> friendshipRequests, ArrayList<String> friendships, boolean profilePrivate) {
+    public User(String username, String password, String email, String name, String surname, Date birthDate, String sex, String role, String profilePicture, ArrayList<Post> posts, ArrayList<String> pictures, ArrayList<String> friendshipRequests, ArrayList<String> friendships, boolean profilePrivate) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -142,11 +142,11 @@ public class User {
         this.pictures = pictures;
     }
 
-    public ArrayList<FriendshipRequest> getFriendshipRequests() {
+    public ArrayList<String> getFriendshipRequests() {
         return friendshipRequests;
     }
 
-    public void setFriendshipRequests(ArrayList<FriendshipRequest> friendshipRequests) {
+    public void setFriendshipRequests(ArrayList<String> friendshipRequests) {
         this.friendshipRequests = friendshipRequests;
     }
 
@@ -166,4 +166,9 @@ public class User {
         this.profilePrivate = profilePrivate;
     }
 
+    public void addRequest(String username){
+        if(this.friendshipRequests == null)
+            this.friendshipRequests = new ArrayList<String>();
+        this.friendshipRequests.add(username);
+    }
 }
