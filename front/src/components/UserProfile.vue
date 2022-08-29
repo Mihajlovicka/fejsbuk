@@ -236,7 +236,7 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
     this.personalProfile = false;
     axios.get('/getUser', {params: {username: this.username}}).then(resp => {
       this.user = resp.data;

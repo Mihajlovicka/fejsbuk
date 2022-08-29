@@ -19,13 +19,15 @@
           </li>
         </ul>
       </div>
+
       <div class="form-inline my-2 my-lg-0" v-if="!loogedin">
-        <a class="nav-link" href="#">Registracija</a>
+        <router-link to="/register"><a class="nav-link" href="#">Registracija</a></router-link>
         <router-link class="nav-link"  to="/login">Prijava</router-link>
       </div>
       <div class="form-inline my-2 my-lg-0" v-if="loogedin">
-        <router-link class="nav-link" :to="{name: 'userProfile', params: {username:username}}">Profil</router-link>
+        <router-link class="nav-link" :to="{name: 'userProfile', params: {username:username}}" @click="this.$parent.forceRerenderPage()">Profil</router-link>
         <a class="nav-link" href="" @click="logout" >Odjava</a>
+
       </div>
     </div>
   </nav>

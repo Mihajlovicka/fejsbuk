@@ -41,6 +41,13 @@ public class UsersRepo {
         }
     }
 
+    public void addNewUser(User user){
+
+        users.add(user);
+        saveAll();
+
+    }
+
     public void saveAll(){
         makeFileIfNotExists(this.path);
         try {
