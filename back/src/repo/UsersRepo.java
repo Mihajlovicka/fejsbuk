@@ -148,4 +148,13 @@ public class UsersRepo {
         saveAll();
         return;
     }
+
+    public void removeFriendRequest(FriendshipRequest request) {
+        for (User u : users) {
+            if (u.getUsername().equals(request.getSender().getUsername())) {
+                u.removeRequest(request.getReceiver().getUsername());
+            }
+        }
+        saveAll();
+    }
 }

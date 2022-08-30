@@ -169,6 +169,12 @@ public class User {
     public void addRequest(String username){
         if(this.friendshipRequests == null)
             this.friendshipRequests = new ArrayList<String>();
-        this.friendshipRequests.add(username);
+        if(!this.friendshipRequests.contains(username))
+            this.friendshipRequests.add(username);
+    }
+
+    public void removeRequest(String username) {
+        if(this.friendshipRequests.contains(username))
+            this.friendshipRequests.remove(username);
     }
 }

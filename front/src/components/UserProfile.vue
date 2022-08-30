@@ -26,7 +26,7 @@
                         </svg>
                         Nova objava
                       </button>
-                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile" @click="sendFriendRequest()">
+                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && !requestSent()" @click="sendFriendRequest()">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus" data-toggle="tooltip" title="" data-original-title="Connect">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="8.5" cy="7" r="4"></circle>
@@ -34,6 +34,14 @@
                         <line x1="23" y1="11" x2="17" y2="11"></line>
                       </svg>
                       Dodaj prijatelja
+                    </button>
+
+                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && requestSent()" @click="cancelRequest()">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-dash-fill" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11 7.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
+                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                      </svg>
+                      Otkazi zahtev
                     </button>
                     </div>
                 </div>
@@ -203,14 +211,35 @@ export default {
       post:{description:''},
       showNewPost:false,
       showGallery:false,
-      logged_username: ''
+      logged_username: '',
+      loggedUser:Object,
+      sentRequests:[]
     }
   },
   methods: {
+    cancelRequest(){
+      axios.post('/cancelFriendRequest',this.user).then(resp => {
+        alert("Uspesno otkazan zahtev za prijateljstvo.")
+        console.log(resp.data)
+        this.sentRequests = resp.data.friendshipRequests;
+        this.$forceUpdate();
+      }).catch(resp => {
+        alert(resp.data.error)
+      })
+    },
+    requestSent(){
+      for(let i = 0; i < this.sentRequests.length; i++){
+        if(this.username === this.sentRequests[i]){
+          return true;
+        }
+      }
+      return false;
+    },
     sendFriendRequest(){
-      axios.post('/addFriend',this.user).then(() => {
+      axios.post('/addFriend',this.user).then(resp => {
         alert("Uspesno poslat zahtev za prijateljstvo.")
-
+        console.log(resp.data)
+        this.sentRequests = resp.data.friendshipRequests;
         this.$forceUpdate();
       }).catch(resp => {
         alert(resp.data.error)
@@ -263,6 +292,8 @@ export default {
     })
     axios.get('/getLoggedInUser').then(resp => {
       this.logged_username = resp.data.username;
+      this.loggedUser = resp.data;
+      this.sentRequests = this.loggedUser.friendshipRequests;
       console.log(resp.data);
       if(resp.data.username === this.username)
         this.personalProfile = true;

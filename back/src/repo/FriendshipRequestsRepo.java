@@ -63,4 +63,14 @@ public class FriendshipRequestsRepo {
         if(!myObj.exists())
             myObj.mkdir();
     }
+
+    public void removeRequest(FriendshipRequest request) {
+
+        for(FriendshipRequest req : requests){
+            if(req.getSender().getUsername().equals(request.getSender().getUsername()) &&
+                    req.getReceiver().getUsername().equals(request.getReceiver().getUsername()))
+                requests.remove(req);
+        }
+        saveAll();
+    }
 }

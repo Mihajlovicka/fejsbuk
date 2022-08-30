@@ -153,7 +153,31 @@ public class SparkAppMain {
                 res.status(200);
                 User user = userService.addFriend(u, req.headers("Authorization"));
                 if(user != null)
-                    return objectMapper.writeValueAsString(userService.registerUser(u));
+                    return objectMapper.writeValueAsString(user);
+                else{
+                    res.status(404);
+                    ObjectNode error = objectMapper.createObjectNode();
+                    error.put("error", "Doslo je do greske.");
+                    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+                }
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
+        post("/cancelFriendRequest", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            User u = objectMapper.readValue(payload, User.class);
+            try {
+                res.status(200);
+                User user = userService.cancelFriendRequest(u, req.headers("Authorization"));
+                if(user != null)
+                    return objectMapper.writeValueAsString(user);
                 else{
                     res.status(404);
                     ObjectNode error = objectMapper.createObjectNode();

@@ -28,12 +28,10 @@
     "profilePicture": "no_image.jpg",
     "posts": null,
     "pictures": null,
-    "friendshipRequests": [
-      "msara"
-    ],
+    "friendshipRequests": [],
     "friendships": null,
     "profilePrivate": false,
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcmtpIiwiZXhwIjoxNjYxODAzNDQxLCJpYXQiOjE2NjE3ODU0NDF9.ATpUJy0Br_HktQSsonWp1_beeeJot08kllaJDK9jZfo"
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcmtpIiwiZXhwIjoxNjYxODgwODM0LCJpYXQiOjE2NjE4NjI4MzR9.0zQVMKLvMCkdcG-KLfQhgE8OxL61gtG2m3ChTe4uoAA"
   },
   {
     "username": "jeca",

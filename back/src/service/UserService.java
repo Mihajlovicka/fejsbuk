@@ -175,4 +175,19 @@ public class UserService {
         usersRepo.addFriendRequest(request);
         return getUser(sender.getUsername());
     }
+
+    public User cancelFriendRequest(User u, String auth) throws Exception {
+        User sender = getLoggedInUser(auth);
+        if(sender == null) throw new NotFound("token not valid");
+        User reciever = getUser(u.getUsername());
+        if(reciever == null) throw new NotFound("User doesnt exist");
+        FriendshipRequest request = new FriendshipRequest();
+        request.setSender(sender);
+        request.setReceiver(reciever);
+        request.setState(RequestState.OnHold);
+        request.setDate(new javaxt.utils.Date());
+        friendshipRequestsRepo.removeRequest(request);
+        usersRepo.removeFriendRequest(request);
+        return getUser(sender.getUsername());
+    }
 }
