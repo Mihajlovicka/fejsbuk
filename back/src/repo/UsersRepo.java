@@ -25,30 +25,31 @@ public class UsersRepo {
     private final String path = "./files/users.json";
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public UsersRepo(){
+    public UsersRepo() {
         readAll();
     }
 
-    public ArrayList<User> getAll(){
+    public ArrayList<User> getAll() {
         return this.users;
     }
 
-    public void readAll(){
+    public void readAll() {
         try {
-            users = objectMapper.readValue(new File(path), new TypeReference<ArrayList<User>>(){});
+            users = objectMapper.readValue(new File(path), new TypeReference<ArrayList<User>>() {
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void addNewUser(User user){
+    public void addNewUser(User user) {
 
         users.add(user);
         saveAll();
 
     }
 
-    public void saveAll(){
+    public void saveAll() {
         makeFileIfNotExists(this.path);
         try {
             objectMapper.writeValue(new File(path), users);
@@ -57,37 +58,38 @@ public class UsersRepo {
         }
 
     }
-    public void init(){
+
+    public void init() {
         users.clear();
-        User u = new User("msara","123","saram","sara","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
+        User u = new User("msara", "123", "saram", "sara", "mihajlovic", new Date(), "z", "admin", "", new ArrayList<Post>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), true);
         users.add(u);
-        User u1 = new User("saram@gmail.com","123","saram","mira","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
+        User u1 = new User("saram@gmail.com", "123", "saram", "mira", "mihajlovic", new Date(), "z", "admin", "", new ArrayList<Post>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), true);
         users.add(u1);
-        User u2 = new User("saram@gmail.com","123","saram","nika","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
+        User u2 = new User("saram@gmail.com", "123", "saram", "nika", "mihajlovic", new Date(), "z", "admin", "", new ArrayList<Post>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), true);
         users.add(u2);
-        User u3 = new User("saram@gmail.com","123","dajana","dajana","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
+        User u3 = new User("saram@gmail.com", "123", "dajana", "dajana", "mihajlovic", new Date(), "z", "admin", "", new ArrayList<Post>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), true);
         users.add(u3);
-        User u4 = new User("saram@gmail.com","123","dajana","dajana","ristic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
+        User u4 = new User("saram@gmail.com", "123", "dajana", "dajana", "ristic", new Date(), "z", "admin", "", new ArrayList<Post>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>(), true);
         users.add(u4);
     }
 
-    public User getByUsername(String username){
+    public User getByUsername(String username) {
 
-        for(User u:users){
-            if(u.getUsername().equals(username)){
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
                 return u;
             }
         }
         return null;
     }
 
-    public User updateUser(User user){
-        for (User u : users){
-            if(u.getUsername().equals(user.getUsername())){
+    public User updateUser(User user) {
+        for (User u : users) {
+            if (u.getUsername().equals(user.getUsername())) {
                 u.setName(user.getName());
                 u.setSurname(user.getSurname());
                 u.setEmail(user.getEmail());
-                u.setBirthDate( user.getBirthDate());
+                u.setBirthDate(user.getBirthDate());
                 u.setSex(user.getSex());
                 u.setProfilePrivate(user.isProfilePrivate());
                 saveAll();
@@ -97,30 +99,30 @@ public class UsersRepo {
         return null;
     }
 
-    public void addUser(User user){
+    public void addUser(User user) {
         this.users.add(user);
         saveAll();
     }
 
-    public static void makeFileIfNotExists(String path){
+    public static void makeFileIfNotExists(String path) {
         File myObj = new File(path);
         try {
-            if(!myObj.exists())
+            if (!myObj.exists())
                 myObj.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void makeDirectoryIfNotExists(String path){
+    public static void makeDirectoryIfNotExists(String path) {
         File myObj = new File(path);
-        if(!myObj.exists())
+        if (!myObj.exists())
             myObj.mkdir();
     }
 
     public void changePassword(String username, String new_password) {
-        for (User u : users){
-            if(u.getUsername().equals(username)){
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
                 u.setPassword(new_password);
                 saveAll();
                 return;
@@ -129,8 +131,8 @@ public class UsersRepo {
     }
 
     public void changeProfilePhoto(String username, String picture) {
-        for (User u : users){
-            if(u.getUsername().equals(username)){
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
                 u.setProfilePicture(picture);
                 saveAll();
                 return;
@@ -139,8 +141,8 @@ public class UsersRepo {
     }
 
     public void addFriendRequest(FriendshipRequest request) {
-        for (User u : users){
-            if(u.getUsername().equals(request.getSender().getUsername())) {
+        for (User u : users) {
+            if (u.getUsername().equals(request.getSender().getUsername())) {
                 u.addRequest(request.getReceiver().getUsername());
             }
 
@@ -156,5 +158,36 @@ public class UsersRepo {
             }
         }
         saveAll();
+    }
+
+    public void acceptFriendRequest(FriendshipRequest request) {
+        for (User u : users) {
+            if (u.getUsername().equals(request.getSender().getUsername())) {
+                u.removeRequest(request.getReceiver().getUsername());
+                u.addFriend(request.getReceiver().getUsername());
+            }
+
+        }
+        for (User u : users) {
+            if (u.getUsername().equals(request.getReceiver().getUsername())) {
+
+                u.addFriend(request.getSender().getUsername());
+            }
+
+        }
+        saveAll();
+        return;
+    }
+
+    public void rejectFriendRequest(FriendshipRequest request) {
+        for (User u : users) {
+            if (u.getUsername().equals(request.getSender().getUsername())) {
+                u.removeRequest(request.getReceiver().getUsername());
+
+            }
+
+        }
+        saveAll();
+        return;
     }
 }

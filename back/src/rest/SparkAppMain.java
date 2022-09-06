@@ -99,6 +99,20 @@ public class SparkAppMain {
             return objectMapper.writeValueAsString(new_users);
         });
 
+        get("/getFriendRequestsList", (req, res) -> {
+            res.status(200);
+
+            String auth = req.headers("Authorization");
+            ArrayList<User> users = null;
+            try {
+                users = userService.getRecievedFriendRequests(auth);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return objectMapper.writeValueAsString(users);
+        });
+
         post("/login", (req, res) -> {
             res.type("application/json");
             String payload = req.body();
@@ -168,6 +182,54 @@ public class SparkAppMain {
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
+        post("/acceptFriendRequest", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            User u = objectMapper.readValue(payload, User.class);
+            try {
+                res.status(200);
+                User user = userService.acceptFriend(u, req.headers("Authorization"));
+                if(user != null)
+                    return objectMapper.writeValueAsString(user);
+                else{
+                    res.status(404);
+                    ObjectNode error = objectMapper.createObjectNode();
+                    error.put("error", "Doslo je do greske.");
+                    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+                }
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
+        post("/rejectFriendRequest", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            User u = objectMapper.readValue(payload, User.class);
+            try {
+                res.status(200);
+                User user = userService.rejectFriend(u, req.headers("Authorization"));
+                if(user != null)
+                    return objectMapper.writeValueAsString(user);
+                else{
+                    res.status(404);
+                    ObjectNode error = objectMapper.createObjectNode();
+                    error.put("error", "Doslo je do greske.");
+                    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+                }
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
 
         post("/cancelFriendRequest", (req, res) -> {
             res.type("application/json");

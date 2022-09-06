@@ -14,6 +14,7 @@ import NewProfilePic from "@/components/NewProfilePic";
 import NewPost from "@/components/NewPost";
 
 import RegistrationForm from "@/components/RegistrationForm";
+import FriendRequestsView from "@/components/FriendRequestsView";
 
 
 Vue.config.productionTip = false
@@ -29,8 +30,9 @@ const routes = [
   {path:'/passwordChange/:username', component: PasswordChange, name:'passwordChange', props:true},
   {path:'/newProfilePic/:username', component: NewProfilePic, name:'newProfilePic', props:true},
   {path:'/newPost/:username', component: NewPost, name:'newPost', props:true},
+  {path:'/friendRequestsView', component: FriendRequestsView, name:'friendRequestsView', props:true},
 
-  {path:'/register', component: RegistrationForm}
+  {path:'/register', component: RegistrationForm, name:'register', props:true}
 
 ]
 

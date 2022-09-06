@@ -177,4 +177,16 @@ public class User {
         if(this.friendshipRequests.contains(username))
             this.friendshipRequests.remove(username);
     }
+
+    public void addFriend(String username) {
+        if(this.friendships == null)
+            this.friendships = new ArrayList<String>();
+
+        if(!this.friendships.contains(username))
+            this.friendships.add(username);
+    }
+    public void removeFriend(String username) {
+        if(this.friendships.contains(username))
+            this.friendships.remove(username);
+    }
 }

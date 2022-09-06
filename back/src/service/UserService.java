@@ -170,7 +170,7 @@ public class UserService {
         request.setSender(sender);
         request.setReceiver(reciever);
         request.setState(RequestState.OnHold);
-        request.setDate(new javaxt.utils.Date());
+        request.setDate(new java.util.Date());
         friendshipRequestsRepo.addNewRequest(request);
         usersRepo.addFriendRequest(request);
         return getUser(sender.getUsername());
@@ -185,9 +185,53 @@ public class UserService {
         request.setSender(sender);
         request.setReceiver(reciever);
         request.setState(RequestState.OnHold);
-        request.setDate(new javaxt.utils.Date());
+        request.setDate(new java.util.Date());
         friendshipRequestsRepo.removeRequest(request);
         usersRepo.removeFriendRequest(request);
         return getUser(sender.getUsername());
+    }
+
+    public ArrayList<User> getRecievedFriendRequests(String auth)  throws Exception  {
+        User loggedUser = this.getLoggedInUser(auth);
+        ArrayList<User> foundUsers = new ArrayList<>();
+        if (loggedUser==null)
+        {
+            return  null;
+        }
+        ArrayList<FriendshipRequest> recievedrequests = friendshipRequestsRepo.getRecievedRequestForUser(loggedUser.getUsername());
+        for( FriendshipRequest req : recievedrequests){
+            foundUsers.add(req.getSender());
+        }
+        return foundUsers;
+    }
+
+    public User acceptFriend(User u, String auth) throws Exception {
+        User reciever = getLoggedInUser(auth);
+        if(reciever == null) throw new NotFound("token not valid");
+        User sender = getUser(u.getUsername());
+        if(sender == null) throw new NotFound("User doesnt exist");
+        FriendshipRequest request = new FriendshipRequest();
+        request.setSender(sender);
+        request.setReceiver(reciever);
+        request.setState(RequestState.OnHold);
+        request.setDate(new java.util.Date());
+        friendshipRequestsRepo.acceptRequest(request);
+        usersRepo.acceptFriendRequest(request);
+        return getUser(reciever.getUsername());
+    }
+
+    public User rejectFriend(User u, String auth) throws Exception {
+        User reciever = getLoggedInUser(auth);
+        if(reciever == null) throw new NotFound("token not valid");
+        User sender = getUser(u.getUsername());
+        if(sender == null) throw new NotFound("User doesnt exist");
+        FriendshipRequest request = new FriendshipRequest();
+        request.setSender(sender);
+        request.setReceiver(reciever);
+        request.setState(RequestState.OnHold);
+        request.setDate(new java.util.Date());
+        friendshipRequestsRepo.rejectRequest(request);
+        usersRepo.rejectFriendRequest(request);
+        return getUser(reciever.getUsername());
     }
 }

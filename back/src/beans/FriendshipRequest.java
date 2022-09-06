@@ -1,7 +1,7 @@
 package beans;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import javaxt.utils.Date;
+import java.util.Date;
 
 public class FriendshipRequest {
     private User sender;
