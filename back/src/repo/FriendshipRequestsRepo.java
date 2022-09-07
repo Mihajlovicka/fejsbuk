@@ -69,8 +69,10 @@ public class FriendshipRequestsRepo {
 
         for(FriendshipRequest req : requests){
             if(req.getSender().getUsername().equals(request.getSender().getUsername()) &&
+                    req.getState() == RequestState.OnHold &&
                     req.getReceiver().getUsername().equals(request.getReceiver().getUsername()))
                 requests.remove(req);
+            break;
         }
         saveAll();
     }

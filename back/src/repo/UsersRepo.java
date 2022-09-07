@@ -190,4 +190,16 @@ public class UsersRepo {
         saveAll();
         return;
     }
+
+    public void removeFriend(User loggedUser, User u) {
+        for (User user : users) {
+            if (user.getUsername().equals(u.getUsername())) {
+                user.removeFriend(loggedUser.getUsername());
+            }
+            if (user.getUsername().equals(loggedUser.getUsername())) {
+                user.removeFriend(u.getUsername());
+            }
+        }
+        saveAll();
+    }
 }

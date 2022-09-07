@@ -17,7 +17,7 @@
                     <span class="profile-name">{{ user.name }} {{ user.surname }}</span>
                   </div>
                   <div>
-                      <button v-if="personalProfile" @click="showNewPost = true; showGallery = false;" class="btn btn-primary btn-icon-text btn-edit-profile">
+                      <button v-if="personalProfile" @click="showNewPost = true; showGallery = false; showFriends = false;" class="btn btn-primary btn-icon-text btn-edit-profile">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                              class="feather feather-edit btn-icon-prepend">
@@ -26,7 +26,7 @@
                         </svg>
                         Nova objava
                       </button>
-                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && !requestSent()" @click="sendFriendRequest()">
+                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && !requestSent && !checkFriendship" @click="sendFriendRequest()">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus" data-toggle="tooltip" title="" data-original-title="Connect">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="8.5" cy="7" r="4"></circle>
@@ -36,7 +36,15 @@
                       Dodaj prijatelja
                     </button>
 
-                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && requestSent()" @click="cancelRequest()">
+                    <button class="btn btn-icon btn-outline-danger"  v-if="!personalProfile && checkFriendship" style="width:100%; margin-top:5px;" @click="removeFriend();">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-dash-fill" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M11 7.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
+                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                      </svg>
+                      Ukloni prijatelja
+                    </button>
+
+                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && requestSent && !checkFriendship" @click="cancelRequest()">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-dash-fill" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M11 7.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z"/>
                         <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
@@ -55,9 +63,9 @@
                       <path
                           d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"></path>
                     </svg>
-                    <a class="pt-1px d-none d-md-block" @click="showNewPost = false;showGallery = false;">Objave</a>
+                    <a class="pt-1px d-none d-md-block" @click="showNewPost = false;showGallery = false; showFriends = false;">Objave</a>
                   </li>
-                  <li class="header-link-item ml-3 pl-3 border-left d-flex align-items-center">
+                  <li class="header-link-item ml-3 pl-3 border-left d-flex align-items-center" @click="showGallery = false; showNewPost = false; showFriends = true;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="feather feather-users mr-1 icon-md">
@@ -66,9 +74,9 @@
                       <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                       <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
-                    <a class="pt-1px d-none d-md-block" href="#">Prijatelji</a>
+                    <a class="pt-1px d-none d-md-block">Prijatelji</a>
                   </li>
-                  <li @click="showGallery = true; showNewPost = false;" class="header-link-item ml-3 pl-3 border-left d-flex align-items-center">
+                  <li @click="showGallery = true; showNewPost = false; showFriends = false;" class="header-link-item ml-3 pl-3 border-left d-flex align-items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="feather feather-image mr-1 icon-md">
@@ -85,7 +93,7 @@
         </div> <!--heder-->
         <div class="row profile-body">
           <!-- left wrapper start -->
-          <div class="d-none d-md-block col-md-4 col-xl-3 left-wrapper">
+          <div class="d-none d-md-block col-md-4 col-xl-4 left-wrapper">
             <div class="card rounded">
               <div class="card-body">
                 <div class="d-flex align-items-center justify-content-between mb-2">
@@ -134,10 +142,11 @@
           </div>
           <!-- left wrapper end -->
           <!-- middle wrapper start -->
-          <div class="col-md-8 col-xl-6 middle-wrapper">
-            <new-post v-if="showNewPost && !showGallery"></new-post>
-            <user-posts v-if="!showNewPost && !showGallery"></user-posts>
-            <gallery-view v-if="showGallery && !showNewPost"></gallery-view>
+          <div class="col-md-8 col-xl-8 middle-wrapper">
+            <new-post v-if="showNewPost && !showGallery && !showFriends"></new-post>
+            <user-posts v-if="!showNewPost && !showGallery && !showFriends"></user-posts>
+            <gallery-view v-if="showGallery && !showNewPost && !showFriends"></gallery-view>
+            <friends-view v-if="showFriends && !showGallery && !showNewPost"></friends-view>
           </div>
         </div>
       </div>
@@ -194,13 +203,15 @@ import UserPosts from "@/components/UserPosts";
 import axios from "axios";
 import NewPost from "@/components/NewPost";
 import GalleryView from "@/components/GalleryView";
+import FriendsView from "@/components/FriendsView";
 export default {
   name: "UserProfile",
   components:
       {
         GalleryView,
         NewPost,
-        UserPosts
+        UserPosts,
+        FriendsView
       },
   data() {
     return {
@@ -211,12 +222,51 @@ export default {
       post:{description:''},
       showNewPost:false,
       showGallery:false,
+      showFriends:false,
       logged_username: '',
       loggedUser:Object,
-      sentRequests:[]
+      sentRequests:[],
+      friends:[]
+
     }
   },
+  computed : {
+    requestSent(){
+      for(let i = 0; i < this.sentRequests.length; i++){
+        if(this.username === this.sentRequests[i]){
+          return true;
+        }
+      }
+      return false;
+    },
+    checkFriendship(){
+      for(let i = 0; i < this.friends.length; i++){
+        if(this.logged_username === this.friends[i]){
+          return true;
+        }
+      }
+      return false;
+    },
+  },
   methods: {
+    removeFriend(){
+
+
+      axios.post('/removeFriend', this.user).then(resp => {
+        alert("Uspesno uklonjen prijatelj. Cestitke zivot je sada lepsi, jer lazni prijatelji vam ne trebaju u zivotu! 🤗")
+        console.log(resp.data)
+        console.log(this.friends);
+        this.loggedUser = resp.data;
+        this.friends = this.loggedUser.friendships;
+        console.log(this.friends);
+        this.getPictures();
+      }).catch(resp => {
+        alert(resp.data.error)
+      })
+      this.loadRequests();
+      this.$forceUpdate();
+    },
+
     cancelRequest(){
       axios.post('/cancelFriendRequest',this.user).then(resp => {
         alert("Uspesno otkazan zahtev za prijateljstvo.")
@@ -227,14 +277,7 @@ export default {
         alert(resp.data.error)
       })
     },
-    requestSent(){
-      for(let i = 0; i < this.sentRequests.length; i++){
-        if(this.username === this.sentRequests[i]){
-          return true;
-        }
-      }
-      return false;
-    },
+
     sendFriendRequest(){
       axios.post('/addFriend',this.user).then(resp => {
         alert("Uspesno poslat zahtev za prijateljstvo.")
@@ -287,6 +330,7 @@ export default {
     this.personalProfile = false;
     axios.get('/getUser', {params: {username: this.username}}).then(resp => {
       this.user = resp.data;
+      this.friends = this.user.friendships;
       this.username = this.user.username
       this.profilePicture = this.getPictures([this.user.profilePicture]);
     })

@@ -234,4 +234,24 @@ public class UserService {
         usersRepo.rejectFriendRequest(request);
         return getUser(reciever.getUsername());
     }
+
+    public ArrayList<User> getFriends(String username) throws Exception{
+        User user = this.getUser(username);
+        ArrayList<User> foundUsers = new ArrayList<>();
+        for(String friend : user.getFriendships()) {
+            for (User u : usersRepo.getAll()) {
+                if (u.getUsername().equals(friend)){
+                    foundUsers.add(u);
+                }
+            }
+        }
+        return foundUsers;
+    }
+
+    public User removeFriend(User u, String auth) throws Exception {
+        User loggedUser = this.getLoggedInUser(auth);
+
+        usersRepo.removeFriend(loggedUser, u);
+        return loggedUser;
+    }
 }
