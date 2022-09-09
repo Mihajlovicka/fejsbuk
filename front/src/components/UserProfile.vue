@@ -56,18 +56,18 @@
                 </div>
               </div>
               <div class="header-links">
-                <ul class="links d-flex align-items-center mt-3 mt-md-0">
-                  <li class="header-link-item d-flex align-items-center active">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                <ul class="links d-flex align-items-center mt-3 mt-md-0" id="menu_nav_items">
+                  <li class="header-link-item d-flex align-items-center active" @>
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="feather feather-columns mr-1 icon-md">
                       <path
                           d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18"></path>
                     </svg>
-                    <a class="pt-1px d-none d-md-block" @click="showNewPost = false;showGallery = false; showFriends = false;">Objave</a>
+                    <a class="pt-1px d-none d-md-block" @click="showNewPost = false;showGallery = false; showFriends = false;changeActiveComponent();">Objave</a>
                   </li>
-                  <li class="header-link-item ml-3 pl-3 border-left d-flex align-items-center" @click="showGallery = false; showNewPost = false; showFriends = true;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  <li class="header-link-item ml-3 pl-3 border-left d-flex align-items-center" @click="showGallery = false; showNewPost = false; showFriends = true;changeActiveComponent();">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="feather feather-users mr-1 icon-md">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -77,8 +77,8 @@
                     </svg>
                     <a class="pt-1px d-none d-md-block">Prijatelji</a>
                   </li>
-                  <li @click="showGallery = true; showNewPost = false; showFriends = false;" class="header-link-item ml-3 pl-3 border-left d-flex align-items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  <li @click="showGallery = true; showNewPost = false; showFriends = false;changeActiveComponent();" class="header-link-item ml-3 pl-3 border-left d-flex align-items-center">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="feather feather-image mr-1 icon-md">
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -331,6 +331,16 @@ export default {
         if (img_name.split('/')[1] == file && img_name.split('/')[0] == this.username)
           return require("../assets/pictures/" + img_name);
       }
+    },
+    changeActiveComponent(){
+      let activeComponent = 0;
+      if(this.showGallery) activeComponent = 2;
+      else if (this.showFriends) activeComponent = 1;
+
+      for(let i=0; i<document.getElementById("menu_nav_items").children.length; i++){
+        document.getElementById("menu_nav_items").children[i].classList.remove('active');
+      }
+      document.getElementById("menu_nav_items").children[activeComponent].classList.add('active');
     }
   },
   created() {

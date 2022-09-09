@@ -1,9 +1,35 @@
 <template>
   <div class="event-schedule-area-two bg-color pad100">
-    <div class="container" >
+    <div class="container">
       <div class="row">
+        <div class="col-4">
+          <div class="d-flex justify-content-start flex-column">
+            <div class="row">
+              <div class="col-12" style="text-align: left">
+                <h4>Dodatne opcije pretrage</h4>
+              </div>
+              <div class="col-12">
+                <div class="input-group">
+                  <div class="row">
+                    <input type="search" class="form-control rounded" v-model="user_name" value="" placeholder="ime" aria-label="Search" aria-describedby="search-addon" />
+                  </div>
+                  <div class="row">
+                    <input type="search" class="form-control rounded" v-model="user_surname" value="" placeholder="prezime" aria-label="Search" aria-describedby="search-addon" />
+                  </div>
+                  <div class="row">
+                    <input type="search" class="form-control rounded" v-model="user_email" value="" placeholder="email" aria-label="Search" aria-describedby="search-addon" />
+                  </div>
 
-        <div class="col-10" style="margin:0 auto;">
+                </div>
+                <div class="row" style="justify-content: center;">
+                  <br><button type="button" class="btn btn-outline-primary" @click="userSearch">pretraga</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="col-8">
 
           <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade active show" id="home" role="tabpanel">
@@ -19,9 +45,6 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr v-if="filteredOffers.length==0" align="center">
-                    <th>Trenutno nemate zahteva za prijateljstvo.😪</th>
-                  </tr>
                   <tr class="inner-box" v-for="user in filteredOffers" :key="user.username">
                     <td>
                       <div class="event-img">
@@ -40,24 +63,25 @@
                       </div>
                     </td>
                     <td>
-                      <div v-if="loggedIn" class="primary-btn col-8">
-                        <button class="btn btn-icon btn-outline-success" style="width:100%;" @click="manageFriendRequest(true,user);">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
-                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                      <div class="primary-btn" v-if="!user.blocked">
+                        <button class="btn btn-icon btn-outline-danger" style="width:100%; margin-top:5px;" @click="blockUser(user); user.blocked = true;">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-x-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.146-2.854a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
                           </svg>
-                          Prihvati zahtev
-                        </button></div>
-
-                      <div v-if="loggedIn" class="primary-btn col-8">
-                        <button class="btn btn-icon btn-outline-danger" style="width:100%; margin-top:5px;" @click="manageFriendRequest(false,user);">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-x" viewBox="0 0 16 16">
-                            <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-                            <path fill-rule="evenodd" d="M12.146 5.146a.5.5 0 0 1 .708 0L14 6.293l1.146-1.147a.5.5 0 0 1 .708.708L14.707 7l1.147 1.146a.5.5 0 0 1-.708.708L14 7.707l-1.146 1.147a.5.5 0 0 1-.708-.708L13.293 7l-1.147-1.146a.5.5 0 0 1 0-.708z"/>
-                          </svg>
-                          Odbij zahtev
+                          Blokiraj korisnika
                         </button>
                       </div>
+                      <div class="primary-btn" v-if="user.blocked">
+                        <button class="btn btn-icon btn-outline-primary" style="width:100%; margin-top:5px;" @click="unblockUser(user); user.blocked = false;">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                          </svg>
+                          Odblokiraj korisnika
+                        </button>
+                      </div>
+
+
                     </td>
                   </tr>
                   </tbody>
@@ -79,64 +103,57 @@ import 'vue2-datepicker/index.css';
 
 
 export default {
-  name: "FriendRequestsView",
+  name: "UserSearchResult",
+
   props:['headerSearch'],
   data() {
     return {
       users: [],
       loggedIn:false,
-      search:"",
+      user_name:"",
+      user_surname: "",
+      user_email:"",
       selectedDate:null,
       images:[],
       selectedFilter:'',
 
     }
   },
-  computed: {
-    filteredOffers() {
-      return this.users;
-    }
-  },
   methods:{
-    loadRequests(){
-      axios.get('/getFriendRequestsList',{}).then(resp => {
+
+    blockUser(user){
+      axios.post('/blockUser', user).then(resp => {
+        alert("Uspesno blokiran korisnik. Cestitke zivot je sada lepsi, jer toksicni korisnici vam ne trebaju u sistemu! 🤗")
+        console.log(resp.data);
+
+
+      }).catch(resp => {
+        alert(resp.data.error)
+      })
+
+    },
+    unblockUser(user){
+      axios.post('/unblockUser', user).then(resp => {
+        alert("Uspesno odblokiran korisnik. Cestitke zivot je sada lepsi, jer ljudi se mogu popraviti! 🤗")
+        console.log(resp.data);
+
+
+      }).catch(resp => {
+        alert(resp.data.error)
+      })
+
+    },
+
+    userSearch(){
+      // const offset = this.selectedDate[0].getTimezoneOffset()
+      // this.selectedDate[0] = new Date(this.selectedDate[0].getTime() - (offset*60*1000))
+      // console.log(this.selectedDate[0].toISOString().split('T')[0])
+
+
+      axios.get('/adminSearchUsers',{params: {name:this.user_name === "" ? "" : this.user_name, surname:this.user_surname === "" ? "" : this.user_surname, email:this.user_email === "" ? "" : this.user_email}}).then(resp => {
         this.users = resp.data;
-        this.filteredOffers = resp.data;
         this.getPictures();
       })
-    },
-    manageFriendRequest(accepted, user){
-
-      if(accepted == true) {
-        axios.post('/acceptFriendRequest', user).then(resp => {
-          alert("Uspesno prihvacen zahtev za prijateljstvo.")
-          console.log(resp.data)
-          this.loadRequests();
-
-          this.getPictures();
-
-
-
-        }).catch(resp => {
-          alert(resp.data.error)
-        })
-      }
-      else{
-        axios.post('/rejectFriendRequest', user).then(resp => {
-          alert("Uspesno odbijen zahtev za prijateljstvo.")
-          console.log(resp.data)
-          this.loadRequests();
-
-          this.getPictures();
-
-
-        }).catch(resp => {
-          alert(resp.data.error)
-        })
-      }
-
-      this.loadRequests();
-      this.$forceUpdate();
     },
     getPictures(){
       let imgs = {}
@@ -158,7 +175,17 @@ export default {
   created() {
     this.loggedIn = localStorage.getItem("token") !== null
     this.search = this.headerSearch
-    this.loadRequests();
+    axios.get('/searchUsers',{params: {start:"", end:"", search:this.headerSearch === "" ? "" : this.headerSearch}}).then(resp => {
+      this.users = resp.data;
+      this.getPictures();
+    })
+  },
+  computed: {
+    filteredOffers() {
+      let filtered_all = this.users;
+
+      return filtered_all;
+    }
   }
 }
 </script>
@@ -167,10 +194,11 @@ export default {
 .input-group{
   padding: 10px;
   float: left;
-  justify-content: right;
+  justify-content: center;
 }
 .input-group input{
-  margin: 10px 30px 10px 0px;
+  margin: 10px 30px 10px 30px;
+  display: block;
 }
 
 .input-group button{

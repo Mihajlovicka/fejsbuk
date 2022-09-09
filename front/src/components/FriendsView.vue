@@ -99,6 +99,7 @@ export default {
     loadRequests(){
       axios.get('/getFriendsList',{params: {username: this.username}}).then(resp => {
         this.users = resp.data;
+        this.filteredOffers = resp.data;
         this.getPictures();
       })
     },
@@ -111,6 +112,7 @@ export default {
 
           this.getPictures();
 
+          this.loadRequests();
 
 
         }).catch(resp => {

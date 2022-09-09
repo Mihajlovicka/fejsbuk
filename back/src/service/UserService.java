@@ -189,4 +189,82 @@ public class UserService {
         usersRepo.removeFriendRequest(request);
         return getUser(sender.getUsername());
     }
+
+    public ArrayList<User> getRecievedFriendRequests(String auth) throws Exception {
+        User loggedUser = this.getLoggedInUser(auth);
+        ArrayList<User> foundUsers = new ArrayList<>();
+        if (loggedUser == null) {
+            return null;
+        }
+        ArrayList<FriendshipRequest> recievedrequests = friendshipRequestsRepo.getRecievedRequestForUser(loggedUser.getUsername());
+        for (FriendshipRequest req : recievedrequests) {
+            foundUsers.add(req.getSender());
+        }
+        return foundUsers;
+    }
+
+    public User acceptFriend(User u, String auth) throws Exception {
+        User reciever = getLoggedInUser(auth);
+        if (reciever == null) throw new NotFound("token not valid");
+        User sender = getUser(u.getUsername());
+        if (sender == null) throw new NotFound("User doesnt exist");
+        FriendshipRequest request = new FriendshipRequest();
+        request.setSender(sender);
+        request.setReceiver(reciever);
+        request.setState(RequestState.OnHold);
+        request.setDate(new java.util.Date());
+        friendshipRequestsRepo.acceptRequest(request);
+        usersRepo.acceptFriendRequest(request);
+        return getUser(reciever.getUsername());
+    }
+
+    public User rejectFriend(User u, String auth) throws Exception {
+        User reciever = getLoggedInUser(auth);
+        if (reciever == null) throw new NotFound("token not valid");
+        User sender = getUser(u.getUsername());
+        if (sender == null) throw new NotFound("User doesnt exist");
+        FriendshipRequest request = new FriendshipRequest();
+        request.setSender(sender);
+        request.setReceiver(reciever);
+        request.setState(RequestState.OnHold);
+        request.setDate(new java.util.Date());
+        friendshipRequestsRepo.rejectRequest(request);
+        usersRepo.rejectFriendRequest(request);
+        return getUser(reciever.getUsername());
+    }
+
+    public ArrayList<User> getFriends(String username) throws Exception {
+        User user = this.getUser(username);
+        ArrayList<User> foundUsers = new ArrayList<>();
+        for (String friend : user.getFriendships()) {
+            for (User u : usersRepo.getAll()) {
+                if (u.getUsername().equals(friend)) {
+                    foundUsers.add(u);
+                }
+            }
+        }
+        return foundUsers;
+    }
+
+    public User removeFriend(User u, String auth) throws Exception {
+        User loggedUser = this.getLoggedInUser(auth);
+
+        usersRepo.removeFriend(loggedUser, u);
+        return loggedUser;
+    }
+
+    public ArrayList<User> adminSearch(String name, String surname, String email) {
+        ArrayList<User> foundUsers = new ArrayList<>();
+
+        for (User user : usersRepo.getAll()) {
+            if ((name == "" || user.getName().toLowerCase().contains(name.toLowerCase())) &&
+                    (surname == "" || user.getSurname().toLowerCase().contains(surname.toLowerCase())) &&
+                    (email == "" || user.getEmail().toLowerCase().equals(email.toLowerCase()))) {
+                foundUsers.add(user);
+            }
+        }
+        return foundUsers;
+
+    }
+
 }

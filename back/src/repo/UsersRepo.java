@@ -144,4 +144,49 @@ public class UsersRepo {
         }
         saveAll();
     }
+
+
+    public void acceptFriendRequest(FriendshipRequest request) {
+        for (User u : users) {
+            if (u.getUsername().equals(request.getSender().getUsername())) {
+                u.removeRequest(request.getReceiver().getUsername());
+                u.addFriend(request.getReceiver().getUsername());
+            }
+
+        }
+        for (User u : users) {
+            if (u.getUsername().equals(request.getReceiver().getUsername())) {
+
+                u.addFriend(request.getSender().getUsername());
+            }
+
+        }
+        saveAll();
+        return;
+    }
+
+    public void rejectFriendRequest(FriendshipRequest request) {
+        for (User u : users) {
+            if (u.getUsername().equals(request.getSender().getUsername())) {
+                u.removeRequest(request.getReceiver().getUsername());
+
+            }
+
+        }
+        saveAll();
+        return;
+    }
+
+    public void removeFriend(User loggedUser, User u) {
+        for (User user : users) {
+            if (user.getUsername().equals(u.getUsername())) {
+                user.removeFriend(loggedUser.getUsername());
+            }
+            if (user.getUsername().equals(loggedUser.getUsername())) {
+                user.removeFriend(u.getUsername());
+            }
+        }
+        saveAll();
+    }
+
 }
