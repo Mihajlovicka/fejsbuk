@@ -2,28 +2,50 @@ package beans;
 
 import java.util.ArrayList;
 
-public class Post {
+public class PostDTO {
+    private String username;
+    private String nameSurname;
+    private String profilePic;
     private String id;
     private String picture;
     private String description;
     private ArrayList<Comment> comments;
-    private boolean deleted = false;
 
-    public Post() {
+    public PostDTO() {
     }
 
-    public Post(String picture, String description, ArrayList<Comment> comments) {
-        this.picture = picture;
-        this.description = description;
-        this.comments = comments;
-    }
-
-    public Post(String id, String picture, String description, ArrayList<Comment> comments, boolean deleted) {
+    public PostDTO(String username, String nameSurname, String profilePic, String id, String picture, String description, ArrayList<Comment> comments) {
+        this.username = username;
+        this.nameSurname = nameSurname;
+        this.profilePic = profilePic;
         this.id = id;
         this.picture = picture;
         this.description = description;
         this.comments = comments;
-        this.deleted = deleted;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getNameSurname() {
+        return nameSurname;
+    }
+
+    public void setNameSurname(String nameSurname) {
+        this.nameSurname = nameSurname;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 
     public String getId() {
@@ -56,19 +78,5 @@ public class Post {
 
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-    public boolean equals(Post post) {
-        return this.picture.equals(post.getPicture()) &&
-                this.description.equals(post.getDescription()) &&
-                this.deleted == post.isDeleted();
     }
 }

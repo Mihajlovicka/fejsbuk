@@ -8,10 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PostRepo {
     private Map<String, ArrayList<Post>> posts = new HashMap<>();
@@ -67,26 +64,49 @@ public class PostRepo {
         else{
             old = new ArrayList<>();
         }
+        post.setId(getId(username));
         old.add(post);
         this.posts.put(username, old);
         saveAll();
     }
 
+    public Post getById(String id){
+        for(Post p: getByUsername(id.split(" ")[0])){
+            if(p.getId().equals(id)) return  p;
+        }
+        return null;
+    }
 
-    public void deletePost(String username, Post post) {
+    private String getId(String username){
+        while(true) {
+            boolean found = false;
+            int id = (new Random()).nextInt(9999);
+            for(Post p: getByUsername(username)){
+                if(p.getId().equals(username + " " +  id)){
+                    found = true;
+                }
+            }
+            if(!found) return username + " " + id;
+        }
+    }
+
+
+    public void deletePost(String id) {
+        String username = id.split(" ")[0];
         if(this.posts.containsKey(username)){
             ArrayList<Post> p = this.posts.get(username);
             for(int i = 0; i < p.size(); i++){
-                if(p.get(i).equals(post)){
-                    post.setDeleted(true);
-                    post.setComments(p.get(i).getComments());
-                    p.remove(i);
-                    p.add(post);
-                    this.posts.put(username, p);
+                if(p.get(i).getId().equals(id)){
+                    posts.get(username).get(i).setDeleted(true);
+                    posts.get(username).get(i).setComments(p.get(i).getComments());
+//                    p.remove(i);
+//                    p.add(post);
+//                    this.posts.put(username, p);
                 }
             }
         }
         saveAll();
+
         ArrayList<Post> p = posts.get(username);
         for(int i = 0; i < p.size(); i++){
             if(p.get(i).isDeleted()){

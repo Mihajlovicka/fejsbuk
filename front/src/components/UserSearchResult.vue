@@ -56,7 +56,8 @@
                   <tr class="inner-box" v-for="user in filteredOffers" :key="user.username">
                     <td>
                       <div class="event-img">
-                        <img :src="images[user.username]" alt=""/>
+                        <img v-if="images[user.username] != '' && images.hasOwnProperty(user.username)" :src="images[user.username]" alt=""/>
+                        <img v-if="images[user.username] == '' || !images.hasOwnProperty(user.username)" :src="images['no_image.jpg']" alt=""/>
                       </div>
                     </td>
                     <td>
@@ -121,7 +122,6 @@ export default {
       selectedDate:null,
       images:[],
       selectedFilter:'',
-
     }
   },
   methods:{
@@ -141,7 +141,7 @@ export default {
     },
     getPictures(){
       let imgs = {}
-      for(let k of this.users){
+      for(let k of this.users) {
         imgs[k.username] = k.profilePicture;
       }
       var pom = require.context(
@@ -154,7 +154,8 @@ export default {
         if(imgs[img_name.split('/')[0]] == img_name.split('/')[1])
           this.images[img_name.split('/')[0]] = require("../assets/pictures/"+ img_name);
       }
-    }
+    },
+
   },
   created() {
     this.loggedIn = localStorage.getItem("token") !== null

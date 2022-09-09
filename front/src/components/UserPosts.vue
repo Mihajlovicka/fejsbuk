@@ -5,9 +5,10 @@
         <div class="card-header">
           <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
-              <img class="img-s rounded-circle" :src="profilePicture" alt="">
-              <div class="ml-2">
-                <h5>{{user.name}} {{user.surname}}</h5>
+              <img v-if="post.profilePic != undefined" class="img-s rounded-circle" :src="images[post.username+'/'+post.picture]" alt="profile">
+              <img v-if="post.profilePic == undefined" class="img-s rounded-circle" :src="require('../assets/pictures/no_image.jpg')" alt="profile">
+<div class="ml-2">
+                <h5>{{post.nameSurname}}</h5>
               </div>
             </div>
             <div v-if="$parent.personalProfile" class="dropdown">
@@ -32,7 +33,7 @@
         </div>
         <div class="card-body">
           <p class="mb-3 tx-14">{{post.description}}</p>
-          <img class="img-fluid" :src="post_images[post.picture]" alt="">
+          <img class="img-fluid" :src="images[post.username+'/'+post.picture]" alt="">
         </div>
       </div>
     </div>
@@ -47,48 +48,38 @@ export default {
   name: "UserPosts",
   data(){
     return{
-      username:this.$route.params.username,
-      user:{name:""},
-      profilePicture:'',
+      images:{},
       posts:{},
-      post_images:{}
+      logged_username:'',
     }
   },
   methods:{
     deletePost(post){
-      axios.post('/deletePost',post).then(resp => {
+      axios.post('/deletePost',post.id).then(resp => {
         this.posts = resp.data
-        this.getPictures();
-        this.profilePicture = this.post_images[this.user.profilePicture]
         alert("Uspesno brisanje.")
       }).catch(resp => {
         alert(resp.data.error)
       })
     },
-    getPictures() {
-      var pom = require.context(
-          "../assets/pictures/",
-          true,
-          /^.*\.(jpe?g|png|gif)$/
-      ).keys();
-      for (let image of pom) {
-        let img_name = image.replace('./', '')
-        if (img_name.split("/")[0] == this.username) {
-          this.post_images[img_name.split('/')[1]] = require("../assets/pictures/" + img_name);
-        }
-      }
-    }
   },
   created() {
-    axios.get('/getUser',{params: {username:this.username}}).then(resp => {
-      this.user = resp.data;
-    });
-    axios.get('/getPosts',{params: {username:this.username}}).then(resp => {
+    axios.get('/getPosts', {params: {username: this.$parent.username}}).then(resp => {
       this.posts = resp.data;
-      this.getPictures();
-      this.profilePicture = this.post_images[this.user.profilePicture]
-    });
+      console.log(this.posts)
+    })
+    let post_images = {}
+    var pom = require.context(
+        "../assets/pictures/",
+        true,
+        /^.*\.(jpe?g|png|gif)$/
+    ).keys();
+    for (let image of pom) {
+      let img_name = image.replace('./', '')
+      post_images[img_name] = require("../assets/pictures/" + img_name);
 
+    }
+    this.images = post_images
   },
 }
 </script>

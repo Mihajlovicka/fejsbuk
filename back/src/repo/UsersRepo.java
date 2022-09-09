@@ -57,19 +57,6 @@ public class UsersRepo {
         }
 
     }
-    public void init(){
-        users.clear();
-        User u = new User("msara","123","saram","sara","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
-        users.add(u);
-        User u1 = new User("saram@gmail.com","123","saram","mira","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
-        users.add(u1);
-        User u2 = new User("saram@gmail.com","123","saram","nika","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
-        users.add(u2);
-        User u3 = new User("saram@gmail.com","123","dajana","dajana","mihajlovic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
-        users.add(u3);
-        User u4 = new User("saram@gmail.com","123","dajana","dajana","ristic",new Date(),"z","admin","",new ArrayList<Post>(),new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>(), true);
-        users.add(u4);
-    }
 
     public User getByUsername(String username){
 

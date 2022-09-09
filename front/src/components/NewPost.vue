@@ -5,7 +5,8 @@
         <div class="card-header">
           <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
-              <img class="img-s rounded-circle" :src="profilePicture" alt="">
+              <img v-if="profilePicture != undefined" class="img-s rounded-circle" :src="profilePicture" alt="profile" @click="showProfilePicture">
+              <img v-if="profilePicture == undefined" class="img-s rounded-circle" :src="require('../assets/pictures/no_image.jpg')" alt="profile" @click="showProfilePicture">
               <div class="ml-2">
                 <h5>{{user.name}} {{user.surname}}</h5>
                 <p class="tx-11 text-muted">Nova objava</p>

@@ -85,7 +85,7 @@ export default {
 
     },
     deletePost(){
-      axios.post('/deletePost',this.post).then(() => {
+      axios.post('/deletePost',this.post.id).then(() => {
         alert("Uspesno brisanje.");
         this.closeModal()
         this.$forceUpdate();

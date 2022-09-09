@@ -48,7 +48,6 @@ public class UserService {
             return null;
         }
         user.setRole("user");
-        user.setProfilePicture("no_image.jpg");
         String jws = Jwts.builder().setSubject(user.getUsername()).setExpiration(new Date(new Date().getTime() + 1000*60*60*5L)).setIssuedAt(new java.util.Date()).signWith(key).compact();
         user.setToken(jws);
         usersRepo.addNewUser(user);
@@ -158,7 +157,7 @@ public class UserService {
     public void removeProfilePhoto(String auth) throws Exception {
         User u = getLoggedInUser(auth);
         if(u == null) throw new NotFound("token not valid");
-        usersRepo.changeProfilePhoto(u.getUsername(), "no_image.jpg");
+        usersRepo.changeProfilePhoto(u.getUsername(), "");
     }
 
     public User addFriend(User u, String auth) throws Exception {
@@ -170,7 +169,7 @@ public class UserService {
         request.setSender(sender);
         request.setReceiver(reciever);
         request.setState(RequestState.OnHold);
-        request.setDate(new javaxt.utils.Date());
+        request.setDate(new Date());
         friendshipRequestsRepo.addNewRequest(request);
         usersRepo.addFriendRequest(request);
         return getUser(sender.getUsername());
@@ -185,7 +184,7 @@ public class UserService {
         request.setSender(sender);
         request.setReceiver(reciever);
         request.setState(RequestState.OnHold);
-        request.setDate(new javaxt.utils.Date());
+        request.setDate(new Date());
         friendshipRequestsRepo.removeRequest(request);
         usersRepo.removeFriendRequest(request);
         return getUser(sender.getUsername());

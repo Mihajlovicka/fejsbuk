@@ -68,8 +68,7 @@ export default {
         this.errorMessage = "";
         localStorage.setItem("token",resp.data.token)
         localStorage.setItem("role",resp.data.role)
-        this.$parent.forceRerenderHeader()
-        this.$router.push('/homepage')
+        window.location.assign('/homepage')
 
 
       }).catch(resp => {

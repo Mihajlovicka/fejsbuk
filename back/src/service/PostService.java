@@ -1,6 +1,8 @@
 package service;
 
+import beans.Comment;
 import beans.Post;
+import beans.PostDTO;
 import beans.User;
 import exceptions.NotFound;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,7 +23,7 @@ public class PostService {
     private static PostRepo postRepo = new PostRepo();
     private static UserService userService = new UserService();
 
-    public void newPost(Part filePart, String text, String auth) throws IOException, NotFound, Exception {
+    public void newPost(Part filePart, String text, String auth) throws Exception {
         User u = userService.getLoggedInUser(auth);
         if(u == null) throw new NotFound("token not valid");
         userService.getUser(u.getUsername());
@@ -46,23 +48,35 @@ public class PostService {
         return postRepo.getByUsername(username);
     }
 
-    public ArrayList<Post> deletePost( Post post, String auth) throws NotFound , Exception{
+    public ArrayList<Post> deletePost( String id, String auth) throws NotFound , Exception{
         User u = userService.getLoggedInUser(auth);
         if(u == null) throw new NotFound("token not valid");
-        String username = u.getUsername();
-        userService.getUser(username);
-        postRepo.deletePost(username, post);
-        if(userService.getUser(username).getProfilePicture().equals(post.getPicture())){
+        postRepo.deletePost(id);
+        if(userService.getUser(u.getUsername()).getProfilePicture().equals(postRepo.getById(id).getPicture())){
             userService.removeProfilePhoto(auth);
         }
-        return postRepo.getByUsername(username);
+        return postRepo.getByUsername(u.getUsername());
     }
 
-    public Post getPost(String username, String picture) throws NotFound {
-        for(Post p : getPosts(username)){
-            if(p.getPicture().equals(picture))
-                return p;
-        }
+    public Post getPost(String id) throws NotFound {
+        Post p = postRepo.getById(id);
+        if(p != null) return p;
         throw new NotFound("Objava nije pronadjena.");
+    }
+
+    public Post getPostByPicture(String username, String picture) throws NotFound {
+        for(Post p: getPosts(username)){
+            if(p.getPicture().equals(picture)) return p;
+        }
+        throw new NotFound("Objava nije pronadjna.");
+    }
+
+    public ArrayList<PostDTO> getPostsDTO(String username) throws NotFound {
+        User r = userService.getUser(username);
+        ArrayList<PostDTO> list = new ArrayList<>();
+        for(Post p : postRepo.getByUsername(username)){
+            list.add(new PostDTO(username, r.getName() + " " +  r.getSurname(), r.getProfilePicture(),p.getId(), p.getPicture(), p.getDescription(), p.getComments()));
+        }
+        return list;
     }
 }

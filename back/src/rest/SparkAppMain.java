@@ -2,6 +2,7 @@ package rest;
 
 import beans.FriendshipRequest;
 import beans.Post;
+import beans.PostDTO;
 import beans.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -250,9 +251,10 @@ public class SparkAppMain {
 
         post("/changeProfilePhoto", (req, res) -> {
             res.type("application/json");
-            String payload = req.body();
-            String picture
-                    = objectMapper.readValue(payload, String.class);
+//            String payload = req.body();
+//            String picture
+//                    = objectMapper.readValue(payload, String.class);
+            String picture = req.body();
             try {
                 res.status(200);
                 userService.changeProfilePhoto(picture, req.headers("Authorization"));
@@ -308,11 +310,11 @@ public class SparkAppMain {
         post("/deletePost", (req, res) -> {
             res.type("application/json");
             String payload = req.body();
-            Post post
-                    = objectMapper.readValue(payload, Post.class);
+            String id
+                    = objectMapper.readValue(payload, String.class);
             try {
                 res.status(200);
-                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost(post, req.headers("Authorization")));
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost(id, req.headers("Authorization")));
             } catch (NotFound e) {
                 res.status(404);
                 e.printStackTrace();
@@ -332,7 +334,7 @@ public class SparkAppMain {
             String username = req.queryParams("username");
             try {
                 res.status(200);
-                ArrayList<Post> u = postService.getPosts(username);
+                ArrayList<PostDTO> u = postService.getPostsDTO(username);
                 return objectMapper.writeValueAsString(u);
             } catch (NotFound e) {
                 e.printStackTrace();
@@ -345,12 +347,28 @@ public class SparkAppMain {
         });
 
         get("/getPost", (req, res) -> {
+            String id = req.queryParams("id");
+            try {
+                res.status(200);
+
+                return objectMapper.writeValueAsString(postService.getPost(id));
+            } catch (NotFound e) {
+                e.printStackTrace();
+                res.status(404);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+
+        });
+
+        get("/getPostByPicture", (req, res) -> {
             String username = req.queryParams("username");
             String picture = req.queryParams("picture");
             try {
                 res.status(200);
 
-                return objectMapper.writeValueAsString(postService.getPost(username, picture));
+                return objectMapper.writeValueAsString(postService.getPostByPicture(username, picture));
             } catch (NotFound e) {
                 e.printStackTrace();
                 res.status(404);

@@ -13,7 +13,8 @@
                 </figure>
                 <div class="cover-body d-flex justify-content-between align-items-center">
                   <div>
-                    <img class="profile-pic" :src="profilePicture" alt="profile" @click="showProfilePicture">
+                    <img v-if="profilePicture != undefined" class="profile-pic" :src="profilePicture" alt="profile" @click="showProfilePicture">
+                    <img v-if="profilePicture == undefined" class="profile-pic" :src="require('../assets/pictures/no_image.jpg')" alt="profile" @click="showProfilePicture">
                     <span class="profile-name">{{ user.name }} {{ user.surname }}</span>
                   </div>
                   <div>
@@ -174,7 +175,7 @@
                        class="feather feather-edit-2 icon-sm mr-2">
                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                   </svg>
-                  <span class=""><button @click="deletePost()">Izbrisi objavu</button></span>
+                  <span class=""><a href="" @click="deletePost()">Izbrisi objavu</a></span>
                 </div>
               </div>
             </div>
@@ -224,7 +225,7 @@ export default {
         this.sentRequests = resp.data.friendshipRequests;
         this.$forceUpdate();
       }).catch(resp => {
-        alert(resp.data.error)
+        alert(resp.response.data.error)
       })
     },
     requestSent(){
@@ -242,28 +243,34 @@ export default {
         this.sentRequests = resp.data.friendshipRequests;
         this.$forceUpdate();
       }).catch(resp => {
-        alert(resp.data.error)
+        alert(resp.response.data.error)
       })
     },
     showProfilePicture() {
       document.getElementById("profilePicModal").style.display = "block";
       document.getElementById("profPic").style.display = "block";
+      if(this.profilePicture != undefined){
       document.getElementById("modelPicture").src = this.profilePicture;
-      axios.get('/getPost',{params: {username:this.username, picture:this.user.profilePicture}}).then(resp => {
+      axios.get('/getPostByPicture',{params: {username:this.username, picture:this.user.profilePicture}}).then(resp => {
         this.post = resp.data;
       }).catch(resp => {
-        alert(resp.data.error)
-      });
+        alert(resp.response.data.error)
+      });}
+      else{
+        document.getElementById("modelPicture").src = require('../assets/pictures/no_image.jpg');
+      }
 
     }, closeModal() {
       document.getElementById("profilePicModal").style.display = "none";
-    },deletePost(){
-      axios.post('/deletePost',this.post).then(() => {
+    },
+    deletePost(){
+      if(this.profilePicture == undefined) return
+      axios.post('/deletePost',this.post.id).then(() => {
         alert("Uspesno brisanje.")
         this.closeModal()
         this.$forceUpdate();
       }).catch(resp => {
-        alert(resp.data.error)
+        alert(resp.response.data.error)
       })
       axios.get('/getUser', {params: {username: this.username}}).then(resp => {
         this.user = resp.data;
@@ -283,7 +290,7 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.personalProfile = false;
     axios.get('/getUser', {params: {username: this.username}}).then(resp => {
       this.user = resp.data;
@@ -294,7 +301,6 @@ export default {
       this.logged_username = resp.data.username;
       this.loggedUser = resp.data;
       this.sentRequests = this.loggedUser.friendshipRequests;
-      console.log(resp.data);
       if(resp.data.username === this.username)
         this.personalProfile = true;
     });
