@@ -5,7 +5,7 @@
         <div class="card-header">
           <div class="d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
-              <img v-if="post.profilePic != undefined" class="img-s rounded-circle" :src="images[post.username+'/'+post.picture]" alt="profile">
+              <img v-if="post.profilePic != undefined" class="img-s rounded-circle" :src="images[post.username+'/'+post.profilePic]" alt="profile">
               <img v-if="post.profilePic == undefined" class="img-s rounded-circle" :src="require('../assets/pictures/no_image.jpg')" alt="profile">
 <div class="ml-2">
                 <h5>{{post.nameSurname}}</h5>
@@ -66,7 +66,6 @@ export default {
   created() {
     axios.get('/getPosts', {params: {username: this.$parent.username}}).then(resp => {
       this.posts = resp.data;
-      console.log(this.posts)
     })
     let post_images = {}
     var pom = require.context(

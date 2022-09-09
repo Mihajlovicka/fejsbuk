@@ -432,9 +432,6 @@ public class SparkAppMain {
 
         post("/changeProfilePhoto", (req, res) -> {
             res.type("application/json");
-//            String payload = req.body();
-//            String picture
-//                    = objectMapper.readValue(payload, String.class);
             String picture = req.body();
             try {
                 res.status(200);
@@ -490,9 +487,7 @@ public class SparkAppMain {
 
         post("/deletePost", (req, res) -> {
             res.type("application/json");
-            String payload = req.body();
-            String id
-                    = objectMapper.readValue(payload, String.class);
+            String id = req.body();
             try {
                 res.status(200);
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost(id, req.headers("Authorization")));

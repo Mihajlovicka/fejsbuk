@@ -25,30 +25,31 @@ public class UsersRepo {
     private final String path = "./files/users.json";
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public UsersRepo(){
+    public UsersRepo() {
         readAll();
     }
 
-    public ArrayList<User> getAll(){
+    public ArrayList<User> getAll() {
         return this.users;
     }
 
-    public void readAll(){
+    public void readAll() {
         try {
-            users = objectMapper.readValue(new File(path), new TypeReference<ArrayList<User>>(){});
+            users = objectMapper.readValue(new File(path), new TypeReference<ArrayList<User>>() {
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void addNewUser(User user){
+    public void addNewUser(User user) {
 
         users.add(user);
         saveAll();
 
     }
 
-    public void saveAll(){
+    public void saveAll() {
         makeFileIfNotExists(this.path);
         try {
             objectMapper.writeValue(new File(path), users);
@@ -58,23 +59,23 @@ public class UsersRepo {
 
     }
 
-    public User getByUsername(String username){
+    public User getByUsername(String username) {
 
-        for(User u:users){
-            if(u.getUsername().equals(username)){
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
                 return u;
             }
         }
         return null;
     }
 
-    public User updateUser(User user){
-        for (User u : users){
-            if(u.getUsername().equals(user.getUsername())){
+    public User updateUser(User user) {
+        for (User u : users) {
+            if (u.getUsername().equals(user.getUsername())) {
                 u.setName(user.getName());
                 u.setSurname(user.getSurname());
                 u.setEmail(user.getEmail());
-                u.setBirthDate( user.getBirthDate());
+                u.setBirthDate(user.getBirthDate());
                 u.setSex(user.getSex());
                 u.setProfilePrivate(user.isProfilePrivate());
                 saveAll();
@@ -84,30 +85,30 @@ public class UsersRepo {
         return null;
     }
 
-    public void addUser(User user){
+    public void addUser(User user) {
         this.users.add(user);
         saveAll();
     }
 
-    public static void makeFileIfNotExists(String path){
+    public static void makeFileIfNotExists(String path) {
         File myObj = new File(path);
         try {
-            if(!myObj.exists())
+            if (!myObj.exists())
                 myObj.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void makeDirectoryIfNotExists(String path){
+    public static void makeDirectoryIfNotExists(String path) {
         File myObj = new File(path);
-        if(!myObj.exists())
+        if (!myObj.exists())
             myObj.mkdir();
     }
 
     public void changePassword(String username, String new_password) {
-        for (User u : users){
-            if(u.getUsername().equals(username)){
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
                 u.setPassword(new_password);
                 saveAll();
                 return;
@@ -116,8 +117,8 @@ public class UsersRepo {
     }
 
     public void changeProfilePhoto(String username, String picture) {
-        for (User u : users){
-            if(u.getUsername().equals(username)){
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
                 u.setProfilePicture(picture);
                 saveAll();
                 return;
@@ -126,8 +127,8 @@ public class UsersRepo {
     }
 
     public void addFriendRequest(FriendshipRequest request) {
-        for (User u : users){
-            if(u.getUsername().equals(request.getSender().getUsername())) {
+        for (User u : users) {
+            if (u.getUsername().equals(request.getSender().getUsername())) {
                 u.addRequest(request.getReceiver().getUsername());
             }
 
@@ -144,7 +145,6 @@ public class UsersRepo {
         }
         saveAll();
     }
-
 
     public void acceptFriendRequest(FriendshipRequest request) {
         for (User u : users) {

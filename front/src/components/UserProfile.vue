@@ -143,7 +143,7 @@
           </div>
           <!-- left wrapper end -->
           <!-- middle wrapper start -->
-          <div class="col-md-8 col-xl-8 middle-wrapper">
+          <div class="col-md-8 col-xl-8 middle-wrapper" v-if="hideProfile">
             <new-post v-if="showNewPost && !showGallery && !showFriends"></new-post>
             <user-posts v-if="!showNewPost && !showGallery && !showFriends"></user-posts>
             <gallery-view v-if="showGallery && !showNewPost && !showFriends"></gallery-view>
@@ -224,6 +224,7 @@ export default {
       showNewPost:false,
       showGallery:false,
       showFriends:false,
+      hideProfile:true,
       logged_username: '',
       loggedUser:Object,
       sentRequests:[],
@@ -344,6 +345,7 @@ export default {
     }
   },
   created() {
+    this.hideProfile = true;
     this.personalProfile = false;
     axios.get('/getUser', {params: {username: this.username}}).then(resp => {
       this.user = resp.data;
@@ -357,8 +359,13 @@ export default {
       this.sentRequests = this.loggedUser.friendshipRequests;
       if(resp.data.username === this.username)
         this.personalProfile = true;
+      for(let k of this.loggedUser.friendships){
+        if(this.personalProfile == false)
+        if(k == this.username && this.user.profilePrivate){
+          this.hideProfile = false
+        }
+      }
     });
-
   }
 }
 </script>
