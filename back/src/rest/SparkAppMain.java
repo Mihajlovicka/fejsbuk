@@ -100,6 +100,86 @@ public class SparkAppMain {
             return objectMapper.writeValueAsString(new_users);
         });
 
+        get("/adminSearchUsers", (req, res) -> {
+            res.status(200);
+            String name = req.queryParams("name");
+            String surname = req.queryParams("surname");
+            String email = req.queryParams("email");
+            //String auth = req.headers("Authorization");
+            ArrayList<User> users = userService.adminSearch(name, surname, email == null ? "" : email);
+            /*ArrayList<User> new_users = (ArrayList<User>) users.clone();
+            try {
+                User u = userService.getLoggedInUser(auth);
+                if (u != null)
+                    new_users.remove(u);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+            return objectMapper.writeValueAsString(users);
+        });
+
+        get("/getFriendRequestsList", (req, res) -> {
+            res.status(200);
+
+            String auth = req.headers("Authorization");
+            ArrayList<User> users = null;
+            try {
+                users = userService.getRecievedFriendRequests(auth);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return objectMapper.writeValueAsString(users);
+        });
+        post("/blockUser", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            User u = objectMapper.readValue(payload, User.class);
+            try {
+                res.status(200);
+                User user = userService.blockUser(u);
+                if(user != null)
+                    return objectMapper.writeValueAsString(user);
+                else{
+                    res.status(404);
+                    ObjectNode error = objectMapper.createObjectNode();
+                    error.put("error", "Doslo je do greske.");
+                    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+                }
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
+        post("/unblockUser", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            User u = objectMapper.readValue(payload, User.class);
+            try {
+                res.status(200);
+                User user = userService.unblockUser(u);
+                if(user != null)
+                    return objectMapper.writeValueAsString(user);
+                else{
+                    res.status(404);
+                    ObjectNode error = objectMapper.createObjectNode();
+                    error.put("error", "Doslo je do greske.");
+                    return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+                }
+            }catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Token ne vazi.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
         get("/getFriendRequestsList", (req, res) -> {
             res.status(200);
 

@@ -267,4 +267,12 @@ public class UserService {
 
     }
 
+    public User blockUser(User u) {
+        return usersRepo.blockUser(u);
+    }
+
+    public User unblockUser(User u) {
+        return usersRepo.unblockUser(u);
+    }
+
 }

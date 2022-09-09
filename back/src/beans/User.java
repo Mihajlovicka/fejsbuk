@@ -23,7 +23,8 @@ public class User {
      private ArrayList<String> pictures;
     private ArrayList<String> friendshipRequests;//lista usernema
      private ArrayList<String> friendships;
-     private boolean profilePrivate;
+    private boolean blocked;
+    private boolean profilePrivate;
     private String token;
 
     public User() {
@@ -44,6 +45,7 @@ public class User {
         this.friendships = friendships;
         this.posts = posts;
         this.profilePrivate = profilePrivate;
+        this.blocked = false;
     }
 
     public String getToken() {
@@ -160,6 +162,14 @@ public class User {
 
     public boolean isProfilePrivate() {
         return profilePrivate;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
     }
 
     public void setProfilePrivate(boolean profilePrivate) {

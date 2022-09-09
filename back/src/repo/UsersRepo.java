@@ -189,4 +189,27 @@ public class UsersRepo {
         saveAll();
     }
 
+    public User blockUser(User u) {
+        User blockedUser = null;
+        for(User user : users){
+            if(user.getUsername().equals(u.getUsername())){
+                user.setBlocked(true);
+                blockedUser = user;
+            }
+        }
+        saveAll();
+        return blockedUser;
+    }
+
+    public User unblockUser(User u) {
+        User blockedUser = null;
+        for(User user : users){
+            if(user.getUsername().equals(u.getUsername())){
+                user.setBlocked(false);
+                blockedUser = user;
+            }
+        }
+        saveAll();
+        return blockedUser;
+    }
 }
