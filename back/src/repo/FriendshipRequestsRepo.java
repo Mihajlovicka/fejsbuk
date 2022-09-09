@@ -1,6 +1,7 @@
 package repo;
 
 import beans.FriendshipRequest;
+import beans.RequestState;
 import beans.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,8 +69,36 @@ public class FriendshipRequestsRepo {
 
         for(FriendshipRequest req : requests){
             if(req.getSender().getUsername().equals(request.getSender().getUsername()) &&
+                    req.getState() == RequestState.OnHold &&
                     req.getReceiver().getUsername().equals(request.getReceiver().getUsername()))
                 requests.remove(req);
+            break;
+        }
+        saveAll();
+    }
+
+    public ArrayList<FriendshipRequest> getRecievedRequestForUser(String username) {
+        ArrayList<FriendshipRequest> foundRequests = new ArrayList<>();
+        for(FriendshipRequest req : requests){
+            if(req.getReceiver().getUsername().equals(username) && req.getState()==RequestState.OnHold)
+                foundRequests.add(req);
+        }
+        return foundRequests;
+    }
+
+    public void acceptRequest(FriendshipRequest request) {
+        for(FriendshipRequest req : requests){
+            if(req.getSender().getUsername().equals(request.getSender().getUsername()) &&
+                    req.getReceiver().getUsername().equals(request.getReceiver().getUsername()))
+                req.setState(RequestState.Accepted);
+        }
+        saveAll();
+    }
+    public void rejectRequest(FriendshipRequest request) {
+        for(FriendshipRequest req : requests){
+            if(req.getSender().getUsername().equals(request.getSender().getUsername()) &&
+                    req.getReceiver().getUsername().equals(request.getReceiver().getUsername()))
+                req.setState(RequestState.Rejected);
         }
         saveAll();
     }
