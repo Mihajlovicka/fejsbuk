@@ -229,7 +229,11 @@ export default {
         let img_name = image.replace('./', '')
         if(img_name.split('/')[0] == this.username) {
           img_name = img_name.split('/')[1]
-          this.images[img_name] = require("../assets/pictures/" + this.username + "/" + img_name)
+          axios.get('/getPostByPicture',{params: {username:this.username, picture:img_name}}).then(() => {
+            this.images[img_name] = require("../assets/pictures/" + this.username + "/" + img_name)
+          }).catch(() => {
+          });
+
         }
       }
     }

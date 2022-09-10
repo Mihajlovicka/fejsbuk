@@ -1,1 +1,78 @@
-{}
+{
+  "saram": [
+    {
+      "sender": "saram",
+      "receiver": "srki",
+      "content": "cao",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "srki",
+      "receiver": "saram",
+      "content": "ejjj",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "saram",
+      "receiver": "srki",
+      "content": "caodfkheoifhe",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "saram",
+      "receiver": "srki",
+      "content": "caodfkheoifhe",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "saram",
+      "receiver": "srki",
+      "content": "caodfkheoifhe",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "srki",
+      "receiver": "saram",
+      "content": "ejjjffff",
+      "date": "10-09-2022"
+    }
+  ],
+  "srki": [
+    {
+      "sender": "saram",
+      "receiver": "srki",
+      "content": "cao",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "srki",
+      "receiver": "saram",
+      "content": "ejjj",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "saram",
+      "receiver": "srki",
+      "content": "caodfkheoifhe",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "saram",
+      "receiver": "srki",
+      "content": "caodfkheoifhe",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "saram",
+      "receiver": "srki",
+      "content": "caodfkheoifhe",
+      "date": "10-09-2022"
+    },
+    {
+      "sender": "srki",
+      "receiver": "saram",
+      "content": "ejjjffff",
+      "date": "10-09-2022"
+    }
+  ]
+}

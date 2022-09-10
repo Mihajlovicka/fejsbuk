@@ -39,7 +39,6 @@ export default {
   created() {
     axios.get('/getMessages',{params: {sender:this.sender, receiver:this.receiver}}).then(resp => {
       this.messages = resp.data
-      console.log(this.messages)
       for(let m of this.messages){
         document.getElementById('chatLog').innerHTML += ('<p>'+ m.sender + ': ' + m.content+'</p>');
       }

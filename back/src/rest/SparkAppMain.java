@@ -44,7 +44,7 @@ public class SparkAppMain {
     static ObjectMapper objectMapper = new ObjectMapper();
     static UserService userService = new UserService();
     static PostService postService = new PostService();
-    public static Map<ArrayList<String>, Session> userUsernameMap = new ConcurrentHashMap<>();
+    public static Map<String, ArrayList<Session>> userUsernameMap = new ConcurrentHashMap<>();
     public static int nextUserNumber = 1; //Used for creating the next username
 
     public static void main(String[] args) throws Exception {
@@ -711,17 +711,22 @@ public class SparkAppMain {
         });
     }
     public static void broadcastMessage(String sender,String receiver, String message) {
-        Session s = null;
-        for (ArrayList<String> user : userUsernameMap.keySet()) {
+        ArrayList<Session> s = new ArrayList<>();
+        for (String user : userUsernameMap.keySet()) {
             if (user.contains(sender) && user.contains(receiver)) {
                 s = userUsernameMap.get(user);
             }
         }
-        try {
-            userService.addMessage(sender, receiver, message);
-            s.getRemote().sendString(String.valueOf(sender + " :" + message));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        userService.addMessage(sender, receiver, message);
+        s.forEach( session -> {
+            try {
+
+
+                session.getRemote().sendString(String.valueOf(sender + " :" + message));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 }

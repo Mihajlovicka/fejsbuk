@@ -25,9 +25,28 @@ public class WsHandler {
 	public void onConnect(Session session) throws Exception {
 		String sender = session.getUpgradeRequest().getParameterMap().get("sender").get(0);
 		String receiver = session.getUpgradeRequest().getParameterMap().get("receiver").get(0);
-		ArrayList<String > s = new ArrayList<>();
-		s.add(sender);s.add(receiver);
-		SparkAppMain.userUsernameMap.put(s, session);
+		String s = sender + receiver;
+		String s1 = receiver + sender ;
+		if(SparkAppMain.userUsernameMap.containsKey(s)) {
+			ArrayList<Session> sess = SparkAppMain.userUsernameMap.get(s);
+			sess.add(session);
+			SparkAppMain.userUsernameMap.put(s, sess);
+		}
+		else{
+			ArrayList<Session> sess = new ArrayList<>();
+			sess.add(session);
+			SparkAppMain.userUsernameMap.put(s, sess);
+		}
+		if(SparkAppMain.userUsernameMap.containsKey(s1)) {
+			ArrayList<Session> sess = SparkAppMain.userUsernameMap.get(s1);
+			sess.add(session);
+			SparkAppMain.userUsernameMap.put(s1, sess);
+		}
+		else{
+			ArrayList<Session> sess = new ArrayList<>();
+			sess.add(session);
+			SparkAppMain.userUsernameMap.put(s1, sess);
+		}
 //		SparkAppMain.broadcastMessage(sender = "Server", msg = (username + " joined the chat"));
 		//vratiti sve poruke
 	}
