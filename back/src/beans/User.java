@@ -18,11 +18,11 @@ public class User {
      private Date birthDate;
       private String sex;
      private String role;
-      private String profilePicture; //putanja
-    private ArrayList<Post> posts;//ne znam sta ce ovo biti koji tip
-     private ArrayList<String> pictures;
-    private ArrayList<String> friendshipRequests;//lista usernema
-     private ArrayList<String> friendships;
+      private String profilePicture = ""; //putanja
+    private ArrayList<Post> posts = new ArrayList<>();//ne znam sta ce ovo biti koji tip
+     private ArrayList<String> pictures= new ArrayList<>();
+    private ArrayList<String> friendshipRequests= new ArrayList<>();//lista usernema
+     private ArrayList<String> friendships= new ArrayList<>();
     private boolean blocked;
     private boolean profilePrivate;
     private String token;

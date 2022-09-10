@@ -141,6 +141,7 @@ export default {
             alert(resp.response.data.error)
           })
       window.location.assign("/login");
+
     }
   },
 

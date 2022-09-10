@@ -60,7 +60,7 @@ export default {
     logout(){
       localStorage.removeItem("token")
       localStorage.removeItem("role")
-      this.$router.push('/')
+      this.$router.push('/login')
     },
     userSearch(){
       this.$parent.search(this.search)

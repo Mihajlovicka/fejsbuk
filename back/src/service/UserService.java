@@ -48,6 +48,7 @@ public class UserService {
             return null;
         }
         user.setRole("user");
+        user.setFriendships(new ArrayList<>());
         String jws = Jwts.builder().setSubject(user.getUsername()).setExpiration(new Date(new Date().getTime() + 1000*60*60*5L)).setIssuedAt(new java.util.Date()).signWith(key).compact();
         user.setToken(jws);
         user.setProfilePicture("no_image.jpg");
