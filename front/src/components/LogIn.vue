@@ -41,7 +41,7 @@
 
         <!-- Register buttons -->
         <div class="text-center">
-          <p>Zelis zabavu? <a href="#!">Registruj se</a></p>
+          <p>Zelis zabavu? <a href="/register" @click="window.location.assign('/register')">Registruj se</a></p>
         </div>
       </form>
     </div>

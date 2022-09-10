@@ -54,7 +54,7 @@ public class UserService {
         user.setFriendships(new ArrayList<>());
         String jws = Jwts.builder().setSubject(user.getUsername()).setExpiration(new Date(new Date().getTime() + 1000*60*60*5L)).setIssuedAt(new java.util.Date()).signWith(key).compact();
         user.setToken(jws);
-        user.setProfilePicture("no_image.jpg");
+        user.setProfilePicture("");
         usersRepo.addNewUser(user);
         UsersRepo.makeDirectoryIfNotExists("./front/src/assets/pictures/" + user.getUsername());
         return user;

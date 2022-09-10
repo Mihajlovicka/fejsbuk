@@ -61,6 +61,7 @@ export default {
       formData.set('text', this.new_post)
       axios.post('/newPost', formData).then(resp => {
         alert(resp.data.success)
+        window.location.assign("/userProfile/"+this.username);
       }).catch(resp => {
         alert(resp.data.error)
       })

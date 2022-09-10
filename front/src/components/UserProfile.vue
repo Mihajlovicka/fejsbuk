@@ -41,7 +41,7 @@
                         </svg>
                         Nova objava
                       </button>
-                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && !requestSent && !checkFriendship && !requestRecieved" @click="sendFriendRequest()">
+                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && !requestSent && !checkFriendship && !requestRecieved && isLogged" @click="sendFriendRequest()">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus" data-toggle="tooltip" title="" data-original-title="Connect">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="8.5" cy="7" r="4"></circle>
@@ -157,7 +157,14 @@
           </div>
           <!-- left wrapper end -->
           <!-- middle wrapper start -->
-          <div class="col-md-8 col-xl-8 middle-wrapper" v-if="hideProfile">
+          <div class="col-md-8 grid-margin" v-if="!checkPrivacy">
+            <div class="card rounded">
+              <div class="card-header">
+                <b>Korisnik ima privatan profil. Nije za oci javnosti. ako budete prijatelji moci cete da vidite objave korisnika. 🙈</b>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8 col-xl-8 middle-wrapper" v-if="checkPrivacy">
             <new-post v-if="showNewPost && !showGallery && !showFriends"></new-post>
             <user-posts v-if="!showNewPost && !showGallery && !showFriends"></user-posts>
             <gallery-view v-if="showGallery && !showNewPost && !showFriends"></gallery-view>
@@ -293,6 +300,15 @@ export default {
     }
   },
   computed : {
+    checkPrivacy(){
+      if(this.user.profilePrivate) {
+        if (this.isLogged) {
+          if (this.checkFriendship || this.personalProfile) return true;
+        }
+        return false;
+      }
+      else return true;
+    },
     requestSent(){
       for(let i = 0; i < this.sentRequests.length; i++){
         if(this.username === this.sentRequests[i]){
@@ -486,26 +502,35 @@ export default {
       this.recievedRequests = this.user.friendshipRequests;
       this.profilePicture = this.getPictures([this.user.profilePicture]);
     })
-    axios.get('/getLoggedInUser').then(resp => {
-      this.logged_username = resp.data.username;
-      this.loggedUser = resp.data;
-      this.sentRequests = this.loggedUser.friendshipRequests;
-      this.isLogged = true;
-      if(resp.data.username === this.username)
-        this.personalProfile = true;
-      for(let k of this.loggedUser.friendships){
-        if(this.personalProfile == false)
-          if(k == this.username && this.user.profilePrivate){
-            this.hideProfile = false
+    let pom = localStorage.getItem("token");
+      if(pom != null) {
+        axios.get('/getLoggedInUser').then(resp => {
+          this.logged_username = resp.data.username;
+          this.loggedUser = resp.data;
+          this.sentRequests = this.loggedUser.friendshipRequests;
+          this.isLogged = true;
+          if (resp.data.username === this.username)
+            this.personalProfile = true;
+          for (let k of this.loggedUser.friendships) {
+            if (this.personalProfile == false)
+              if (k == this.username && this.user.profilePrivate) {
+                this.hideProfile = false;
+              }
           }
+        }).catch(resp => {
+          this.isLogged = false;
+          console.log(resp.data);
+          this.isLogged = false;
+          this.personalProfile = false;
+
+        });
       }
-    }).catch(resp => {
-      this.isLogged = false;
-      console.log(resp.data);
 
-
- 
-    });
+    if(this.isLogged == false && this.user.profilePrivate){
+      this.hideProfile = false
+    }
+    else this.hideProfile = true;
+    console.log(this.personalProfile)
   }
 }
 </script>
