@@ -91,6 +91,24 @@ public class PostRepo {
     }
 
 
+    public Post addDeletingDescription(String username, String id, String deletingDescription){
+        Post post = null;
+        if(this.posts.containsKey(username)){
+            ArrayList<Post> p = this.posts.get(username);
+            for(int i = 0; i < p.size(); i++){
+                if(p.get(i).getId().equals(id)){
+                    posts.get(username).get(i).setDeletingDescription(deletingDescription);
+                    post = posts.get(username).get(i);
+//                    p.remove(i);
+//                    p.add(post);
+//                    this.posts.put(username, p);
+                }
+            }
+        }
+        saveAll();
+        return post;
+    }
+
     public void deletePost(String id) {
         String username = id.split(" ")[0];
         if(this.posts.containsKey(username)){

@@ -230,6 +230,12 @@ public class SparkAppMain {
                 ObjectNode error = objectMapper.createObjectNode();
                 error.put("error", "Lozinka je pogresna.");
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            } catch (Exception e){
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik je blokiran od strane admina");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
         post("/register", (req, res) -> {
@@ -490,9 +496,9 @@ public class SparkAppMain {
 
         post("/deletePost", (req, res) -> {
             res.type("application/json");
-            String payload = req.body();
-            String id
-                    = objectMapper.readValue(payload, String.class);
+            String id = req.body();
+
+
             try {
                 res.status(200);
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.deletePost(id, req.headers("Authorization")));
@@ -510,12 +516,44 @@ public class SparkAppMain {
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
+        post("/deletePostAdmin", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            Map<String, String> deletingDesc
+                    = objectMapper.readValue(payload, Map.class);
+            try {
+                res.status(200);
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(postService.addDeletingDecriptionPost(deletingDesc));
+            } catch (Exception e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Doslo je do greske. Post nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
 
         get("/getPosts", (req, res) -> {
             String username = req.queryParams("username");
             try {
                 res.status(200);
                 ArrayList<PostDTO> u = postService.getPostsDTO(username);
+                return objectMapper.writeValueAsString(u);
+            } catch (NotFound e) {
+                e.printStackTrace();
+                res.status(404);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+
+        });
+
+        get("/getPostsAdmin", (req, res) -> {
+            String username = req.queryParams("username");
+            try {
+                res.status(200);
+                ArrayList<PostDTO> u = postService.getPostsDTOAdmin();
                 return objectMapper.writeValueAsString(u);
             } catch (NotFound e) {
                 e.printStackTrace();

@@ -1,5 +1,13 @@
 <template>
-<div class="row">
+<div class="row"  id="main-div" style="margin:0 auto;">
+
+  <div class="col-md-12 grid-margin" v-if="posts.length==0">
+    <div class="card rounded">
+      <div class="card-header">
+        <b>Trenutno nemate dodatih objava. Dodajte nove kako bi bile prikazane.</b>
+      </div>
+    </div>
+  </div>
     <div class="col-md-12 grid-margin" v-for="post in posts" v-bind:key="post">
       <div class="card rounded">
         <div class="card-header">
@@ -7,8 +15,25 @@
             <div class="d-flex align-items-center">
               <img v-if="post.profilePic != undefined" class="img-s rounded-circle" :src="images[post.username+'/'+post.picture]" alt="profile">
               <img v-if="post.profilePic == undefined" class="img-s rounded-circle" :src="require('../assets/pictures/no_image.jpg')" alt="profile">
-<div class="ml-2">
+              <div class="ml-2">
                 <h5>{{post.nameSurname}}</h5>
+              </div>
+            </div>
+            <div v-if="isAdmin" class="dropdown">
+              <button class="btn p-0" type="button" id="dropdownMenuButton25" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                  <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
+                </svg>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton25">
+                <input type="text" class="form-control" placeholder="Razlog brisanja" v-model="description">
+                <button class="btn btn-outline-danger   d-flex align-items-center" @click="deletePost(post)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-meh icon-sm mr-2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="8" y1="15" x2="16" y2="15"></line>
+                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                  </svg> <span class="">Obrisi objavu</span></button>
               </div>
             </div>
             <div v-if="$parent.personalProfile" class="dropdown">
@@ -37,6 +62,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
 </template>
@@ -50,24 +76,60 @@ export default {
     return{
       images:{},
       posts:{},
+      isAdmin:false,
       logged_username:'',
+      description:'',
     }
   },
   methods:{
-    deletePost(post){
-      axios.post('/deletePost',post.id).then(resp => {
-        this.posts = resp.data
-        alert("Uspesno brisanje.")
-      }).catch(resp => {
-        alert(resp.data.error)
+    loadPosts(){
+      let axiosUrl = '';
+      let profileView = window.location.href.includes("userProfile");
+      axiosUrl = this.isAdmin && !profileView ? "/getPostsAdmin" : "/getPosts";
+      axios.get(axiosUrl, {params: {username: this.$parent.username}}).then(resp => {
+        this.posts = resp.data;
+        console.log(this.posts)
       })
     },
+    deletePost(post){
+      if(this.isAdmin){
+        if(this.description == '') alert("Nece moci, Niste uneli razlog brisanja objave.");
+        else{
+
+          axios.post('/deletePostAdmin', {username : post.username, id : post.id, description:this.description}).then(resp => {
+            this.posts = resp.data
+
+          }).catch(resp => {
+            alert(resp.data.error)
+          })
+          axios.post('/deletePost',post.id).then(resp => {
+            console.log(resp.data);
+            alert("Uspesno brisanje.");
+            this.loadPosts();
+          }).catch(resp => {
+            alert(resp.data.error)
+          })
+
+          this.loadPosts();
+        }
+      }
+      else {
+        axios.post('/deletePost', post.id).then(resp => {
+          this.posts = resp.data
+          alert("Uspesno brisanje.")
+        }).catch(resp => {
+          alert(resp.data.error)
+        })
+      }
+    },
+  },
+  mounted() { if(this.isAdmin) document.getElementById("main-div").classList.add('col-8');
+
   },
   created() {
-    axios.get('/getPosts', {params: {username: this.$parent.username}}).then(resp => {
-      this.posts = resp.data;
-      console.log(this.posts)
-    })
+    if(localStorage.getItem("role") == "admin") this.isAdmin = true;
+
+    this.loadPosts();
     let post_images = {}
     var pom = require.context(
         "../assets/pictures/",

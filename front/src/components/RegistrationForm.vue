@@ -140,7 +140,7 @@ export default {
           .catch( resp => {
             alert(resp.response.data.error)
           })
-      window.location = "http://localhost:8082/userProfile/" + this.user.username;
+      window.location.assign("/login");
     }
   },
 

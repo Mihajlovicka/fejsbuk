@@ -12,7 +12,7 @@
       <div class="navbar-nav mr-auto">
         <ul class="navbar-nav">
           <li>
-            <div class="input-group" style="margin-left: 50px !important;">
+            <div class="input-group" style="margin-left: 50px !important;" v-if="!isAdmin">
               <input type="search" class="form-control rounded" v-model="search" placeholder="Pretraga" aria-label="Search" aria-describedby="search-addon" />
               <button type="button" class="btn btn-outline-primary" @click="userSearch">pretraga</button>
             </div>
@@ -24,9 +24,15 @@
         <router-link to="/register"><a class="nav-link" href="#">Registracija</a></router-link>
         <router-link class="nav-link"  to="/login">Prijava</router-link>
       </div>
-      <div class="form-inline my-2 my-lg-0" v-if="loogedin">
+      <div class="form-inline my-2 my-lg-0" v-if="loogedin && !isAdmin">
         <router-link class="nav-link" :to="{name: 'friendRequestsView'}" @click="this.$parent.forceRerenderPage()">Zahtevi za prijateljstvo</router-link>
         <router-link class="nav-link" :to="{name: 'userProfile', params: {username:username}}" @click="this.$parent.forceRerenderPage()">Profil</router-link>
+        <a class="nav-link" href="" @click="logout" >Odjava</a>
+
+      </div>
+      <div class="form-inline my-2 my-lg-0" v-if="loogedin && isAdmin">
+        <router-link class="nav-link" :to="{name: 'usersViewAdmin'}" @click="this.$parent.forceRerenderPage()">Prikaz svih korisnika</router-link>
+        <router-link class="nav-link" :to="{name: 'postsViewAdmin'}" @click="this.$parent.forceRerenderPage()">Prikaz svih objava i slika</router-link>
         <a class="nav-link" href="" @click="logout" >Odjava</a>
 
       </div>
@@ -47,6 +53,7 @@ export default {
       loogedin:false,
       search:"",
       username:"",
+      isAdmin:false,
     }
   },
   methods:{
@@ -61,6 +68,7 @@ export default {
   },
   created(){
     this.loogedin = localStorage.getItem("token") !== null;
+    this.isAdmin = localStorage.getItem("role") == "admin" ? true : false;
     axios.get('/getLoggedInUser').then(resp => {
       this.username = resp.data.username
     }).catch(() => {})

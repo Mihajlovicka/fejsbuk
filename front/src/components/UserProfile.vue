@@ -18,6 +18,20 @@
                     <span class="profile-name">{{ user.name }} {{ user.surname }}</span>
                   </div>
                   <div>
+                    <button class="btn btn-icon-text btn-edit-profile btn-outline-success col-9" style="width:100%; margin-bottom: 5px;" @click="manageFriendRequest(true,user);" v-if="!personalProfile && !requestSent && !checkFriendship && requestRecieved">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                      </svg>
+                      Prihvati zahtev
+                    </button>
+                    <button class="btn btn-icon-text btn-edit-profile btn-outline-danger col-9" style="width:100%;" @click="manageFriendRequest(false, user);" v-if="!personalProfile && !requestSent && !checkFriendship && requestRecieved">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H1s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"/>
+                      </svg>
+                      Odbij zahtev
+                    </button>
                       <button v-if="personalProfile" @click="showNewPost = true; showGallery = false; showFriends = false;" class="btn btn-primary btn-icon-text btn-edit-profile">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -27,7 +41,7 @@
                         </svg>
                         Nova objava
                       </button>
-                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && !requestSent && !checkFriendship" @click="sendFriendRequest()">
+                    <button class="btn btn-icon btn-outline-primary addFriend" v-if="!personalProfile && !requestSent && !checkFriendship && !requestRecieved" @click="sendFriendRequest()">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus" data-toggle="tooltip" title="" data-original-title="Connect">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                         <circle cx="8.5" cy="7" r="4"></circle>
@@ -227,14 +241,23 @@ export default {
       logged_username: '',
       loggedUser:Object,
       sentRequests:[],
-      friends:[]
-
+      recievedRequests:[],
+      friends:[],
+      isLogged: false,
     }
   },
   computed : {
     requestSent(){
       for(let i = 0; i < this.sentRequests.length; i++){
         if(this.username === this.sentRequests[i]){
+          return true;
+        }
+      }
+      return false;
+    },
+    requestRecieved(){
+      for(let i = 0; i < this.recievedRequests.length; i++){
+        if(this.loggedUser.username === this.recievedRequests[i]){
           return true;
         }
       }
@@ -250,6 +273,38 @@ export default {
     },
   },
   methods: {
+    manageFriendRequest(accepted, user){
+
+      if(accepted == true) {
+        axios.post('/acceptFriendRequest', user).then(resp => {
+          alert("Uspesno prihvacen zahtev za prijateljstvo.")
+          console.log(resp.data)
+          this.loggedUser = resp.data;
+          this.friends = this.loggedUser.friendships;
+          this.getPictures();
+          this.$forceUpdate();
+
+
+        }).catch(resp => {
+          alert(resp.data.error)
+        })
+      }
+      else{
+        axios.post('/rejectFriendRequest', user).then(resp => {
+          alert("Uspesno odbijen zahtev za prijateljstvo.")
+          console.log(resp.data)
+          this.loggedUser = resp.data;
+          this.friends = this.loggedUser.friendships;
+          this.getPictures();
+          this.$forceUpdate();
+
+        }).catch(resp => {
+          alert(resp.data.error)
+        })
+      }
+      this.$router.go();
+      this.$forceUpdate();
+    },
     removeFriend(){
 
 
@@ -348,15 +403,21 @@ export default {
     axios.get('/getUser', {params: {username: this.username}}).then(resp => {
       this.user = resp.data;
       this.friends = this.user.friendships;
-      this.username = this.user.username
+      this.username = this.user.username;
+
+      this.recievedRequests = this.user.friendshipRequests;
       this.profilePicture = this.getPictures([this.user.profilePicture]);
     })
     axios.get('/getLoggedInUser').then(resp => {
       this.logged_username = resp.data.username;
       this.loggedUser = resp.data;
       this.sentRequests = this.loggedUser.friendshipRequests;
+      this.isLogged = true;
       if(resp.data.username === this.username)
         this.personalProfile = true;
+    }).catch(resp => {
+      this.isLogged = false;
+      console.log(resp.data);
     });
 
   }

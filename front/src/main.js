@@ -17,6 +17,7 @@ import RegistrationForm from "@/components/RegistrationForm";
 import FriendRequestsView from "@/components/FriendRequestsView";
 import FriendsView from "@/components/FriendsView";
 import UsersViewAdmin from "@/components/UsersViewAdmin";
+import UserPosts from "@/components/UserPosts";
 
 
 Vue.config.productionTip = false
@@ -35,6 +36,7 @@ const routes = [
   {path:'/friendRequestsView', component: FriendRequestsView, name:'friendRequestsView', props:true},
   {path:'/friendsView', component: FriendsView, name:'friendRequestsView', props:true},
   {path:'/adminUserView', component: UsersViewAdmin, name:'usersViewAdmin', props:true},
+  {path:'/adminPostsView', component: UserPosts, name:'postsViewAdmin', props:true},
 
   {path:'/register', component: RegistrationForm, name:'register', props:true}
 

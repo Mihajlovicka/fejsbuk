@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class PostService {
     private static PostRepo postRepo = new PostRepo();
@@ -51,10 +52,11 @@ public class PostService {
     public ArrayList<Post> deletePost( String id, String auth) throws NotFound , Exception{
         User u = userService.getLoggedInUser(auth);
         if(u == null) throw new NotFound("token not valid");
-        postRepo.deletePost(id);
         if(userService.getUser(u.getUsername()).getProfilePicture().equals(postRepo.getById(id).getPicture())){
             userService.removeProfilePhoto(auth);
         }
+        postRepo.deletePost(id);
+
         return postRepo.getByUsername(u.getUsername());
     }
 
@@ -78,5 +80,22 @@ public class PostService {
             list.add(new PostDTO(username, r.getName() + " " +  r.getSurname(), r.getProfilePicture(),p.getId(), p.getPicture(), p.getDescription(), p.getComments()));
         }
         return list;
+    }
+
+    public ArrayList<PostDTO> getPostsDTOAdmin() throws NotFound {
+        ArrayList<PostDTO> list = new ArrayList<>();
+        for(User r : userService.getAll()) {
+             for (Post p : postRepo.getByUsername(r.getUsername())) {
+                list.add(new PostDTO(r.getUsername(), r.getName() + " " + r.getSurname(), r.getProfilePicture(), p.getId(), p.getPicture(), p.getDescription(), p.getComments()));
+            }
+        }
+        return list;
+    }
+
+    public Post addDeletingDecriptionPost(Map<String,String> deletingDesc) {
+        String username = deletingDesc.get("username");
+        String id = deletingDesc.get("id");
+        String desc = deletingDesc.get("description");
+        return postRepo.addDeletingDescription(username,id, desc);
     }
 }

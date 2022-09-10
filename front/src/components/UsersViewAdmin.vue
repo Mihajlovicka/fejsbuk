@@ -48,7 +48,8 @@
                   <tr class="inner-box" v-for="user in filteredOffers" :key="user.username">
                     <td>
                       <div class="event-img">
-                        <img :src="images[user.username]" alt=""/>
+                        <img v-if="images[user.username] != '' && images.hasOwnProperty(user.username)" :src="images[user.username]" alt=""/>
+                        <img v-if="images[user.username] == '' || !images.hasOwnProperty(user.username)" :src="images['no_image.jpg']" alt=""/>
                       </div>
                     </td>
                     <td>
@@ -103,7 +104,7 @@ import 'vue2-datepicker/index.css';
 
 
 export default {
-  name: "UserSearchResult",
+  name: "UsersViewAdmin",
 
   props:['headerSearch'],
   data() {

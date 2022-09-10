@@ -8,6 +8,7 @@ public class Post {
     private String description;
     private ArrayList<Comment> comments;
     private boolean deleted = false;
+    private String deletingDescription;
 
     public Post() {
     }
@@ -16,6 +17,7 @@ public class Post {
         this.picture = picture;
         this.description = description;
         this.comments = comments;
+        this.deletingDescription = "";
     }
 
     public Post(String id, String picture, String description, ArrayList<Comment> comments, boolean deleted) {
@@ -24,6 +26,7 @@ public class Post {
         this.description = description;
         this.comments = comments;
         this.deleted = deleted;
+        this.deletingDescription = "";
     }
 
     public String getId() {
@@ -64,6 +67,14 @@ public class Post {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public String getDeletingDescription() {
+        return deletingDescription;
+    }
+
+    public void setDeletingDescription(String deletingDescription) {
+        this.deletingDescription = deletingDescription;
     }
 
     public boolean equals(Post post) {

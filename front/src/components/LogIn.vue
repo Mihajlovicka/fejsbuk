@@ -68,11 +68,15 @@ export default {
         this.errorMessage = "";
         localStorage.setItem("token",resp.data.token)
         localStorage.setItem("role",resp.data.role)
+        if(localStorage.getItem("role") == "admin")
         window.location.assign('/homepage')
-
+        else
+          window.location.assign('/profileView/'+resp.data.username);
 
       }).catch(resp => {
+        console.log(resp);
         this.errorMessage = resp.response.data.error;
+
       })
     }
   }
