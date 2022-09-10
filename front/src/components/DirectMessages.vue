@@ -16,9 +16,10 @@
                       </div>
                     </td>
                     <td>
-                      <div class="event-wrap">
-                        <h3>{{ friend.name }} {{ friend.surname }}</h3>
-
+                      <div class="event-wrap" >
+                        <router-link :to="{name: 'privateMessages', params: {receiver:friend.username, sender:logged_username}}">
+                        <h3 :class="{ admin: friend.role == 'admin' }" >{{ friend.name }} {{ friend.surname }}</h3>
+                        </router-link>
                       </div>
                     </td>
                   </tr>
@@ -29,13 +30,6 @@
           </div>
         </div>
         <div class="col-8">
-          <label>Enter text:</label><input type="text" id="text"/>
-          <input type="button" id="send" value="send" @click="send"/>
-
-          <p></p>
-
-          <div id="chatLog" ></div>
-
 
         </div>
         <!-- /col end-->
@@ -60,28 +54,11 @@ export default {
     }
   },
   methods:{
-    message(msg){
-      console.log(msg);
-      document.getElementById('chatLog').innerHTML += (msg+'</p>');
-    },
-    send(){
-      var text = document.getElementById("text").value;
-
-      if(text==""){
-        this.message('<p>Unesite poruku');
-        return ;
-      }
-      try{
-        this.socket.send(text);
-        this.message('<p>Poslato: '+text);
-      } catch(exception){
-        this.message('<p>Greska: ' + exception);
-      }
-    }
   },
   created() {
     axios.get('/getLoggedInUser').then(resp => {
       this.user = resp.data
+
       this.logged_username = resp.data.username;
       for(let k of this.user.friendships) {
         axios.get('/getUser',{params: {username: k}}).then(resp => {
@@ -89,31 +66,6 @@ export default {
         })
       }
     })
-    // axios.get('/getMessages').then(resp => {
-    //   this.messages = resp.data
-    // })
-
-
-      try{
-        this.socket = new WebSocket("ws://localhost:8080/ws" + "?name=saraaaaaaaaaaaaaa");
-        this.message('<p>connect: Socket Status: '+this.socket.readyState);
-
-        this.socket.onopen = function(){
-          this.message('<p>onopen: Socket Status: '+this.socket.readyState+' (open)');
-        }
-
-        this.socket.onmessage = function(msg){
-          this.message('<p>onmessage: Received: '+msg.data);
-        }
-
-        this.socket.onclose = function(){
-          this.message('<p>onclose: Socket Status: '+this.socket.readyState+' (Closed)');
-          this.socket = null;
-        }
-
-      } catch(exception){
-        this.message('<p>Greska'+exception);
-      }
 
   }
 
@@ -121,6 +73,9 @@ export default {
 </script>
 
 <style scoped>
+.admin{
+  color: red !important;
+}
 .input-group{
   padding: 10px;
   float: left;

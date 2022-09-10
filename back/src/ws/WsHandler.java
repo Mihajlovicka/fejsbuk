@@ -1,6 +1,8 @@
 package ws;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -12,51 +14,37 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
+import rest.SparkAppMain;
 
 @WebSocket
-public class WsHandler extends WebSocketHandler {
+public class WsHandler {
 
-	private static final Queue<Session> allSessions = new ConcurrentLinkedQueue<>();
-	
+	private String sender, msg;
+
 	@OnWebSocketConnect
-	public void connected(Session session) {
-		// Print message
-		System.out.println("Got: " + session.getUpgradeRequest().getParameterMap().get("name")); // Print message
-
-		allSessions.add(session);
+	public void onConnect(Session session) throws Exception {
+		String sender = session.getUpgradeRequest().getParameterMap().get("sender").get(0);
+		String receiver = session.getUpgradeRequest().getParameterMap().get("receiver").get(0);
+		ArrayList<String > s = new ArrayList<>();
+		s.add(sender);s.add(receiver);
+		SparkAppMain.userUsernameMap.put(s, session);
+//		SparkAppMain.broadcastMessage(sender = "Server", msg = (username + " joined the chat"));
+		//vratiti sve poruke
 	}
 
 	@OnWebSocketClose
-	public void closed(Session session, int statusCode, String reason) {
-		allSessions.remove(session);
-	}
-
-	@OnWebSocketError
-	public void error(Session session, Throwable t) {
-		allSessions.remove(session);
+	public void onClose(Session user, int statusCode, String reason) {
+//		String username = SparkAppMain.userUsernameMap.get(user);
+//		SparkAppMain.userUsernameMap.remove(user);
+//		SparkAppMain.broadcastMessage(sender = "Server", msg = (username + " left the chat"));
 	}
 
 	@OnWebSocketMessage
-	public void message(Session session, String message) throws IOException {
-		System.out.println("Got: " + message);
-		postMessage(message, session);
+	public void onMessage(Session session, String message) {
+		String sender = session.getUpgradeRequest().getParameterMap().get("sender").get(0);
+		String receiver = session.getUpgradeRequest().getParameterMap().get("receiver").get(0);
+		SparkAppMain.broadcastMessage(sender , receiver, msg = message);
+		//sacuvati poruku
 	}
-	
-	public static void postMessage(String text, Session sess) {
-		for (Session s : allSessions) {
-			try {
-				if (s.hashCode() != sess.hashCode())
-					s.getRemote().sendString(text);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@Override
-	public void configure(WebSocketServletFactory factory) {
-		factory.getPolicy().setIdleTimeout(1000*60*60);
-	}
-	
 
 }

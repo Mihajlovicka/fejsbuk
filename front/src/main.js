@@ -19,6 +19,7 @@ import FriendsView from "@/components/FriendsView";
 import UsersViewAdmin from "@/components/UsersViewAdmin";
 import UserPosts from "@/components/UserPosts";
 import DirectMessages from "@/components/DirectMessages";
+import PrivateMessages from "@/components/PrivateMessages";
 
 
 Vue.config.productionTip = false
@@ -39,6 +40,7 @@ const routes = [
   {path:'/friendsView', component: FriendsView, name:'friendRequestsView', props:true},
   {path:'/adminUserView', component: UsersViewAdmin, name:'usersViewAdmin', props:true},
   {path:'/adminPostsView', component: UserPosts, name:'postsViewAdmin', props:true},
+  {path:'/messages/:receiver/:sender', component: PrivateMessages, name:'privateMessages', props:true},
 
   {path:'/register', component: RegistrationForm, name:'register', props:true}
 

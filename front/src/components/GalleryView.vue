@@ -34,7 +34,7 @@
                        class="feather feather-edit-2 icon-sm mr-2">
                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                   </svg>
-                  <span class=""><button @click="changeProfilePicture()">Izaberi kao profilnu fotografiju</button></span>
+                  <span class=""><a href="" @click.prevent="changeProfilePicture">Izaberi kao profilnu fotografiju</a></span>
                 </div>
                 <div class="dropdown-item d-flex align-items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -42,7 +42,7 @@
                        class="feather feather-edit-2 icon-sm mr-2">
                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                   </svg>
-                  <span class=""><button @click="deletePost()">Obrisi objavu</button></span>
+                  <span class=""><a href="" @click="deletePost()">Obrisi objavu</a></span>
                 </div>
               </div>
             </div>
@@ -74,20 +74,20 @@
                     </svg>
                   </button>
                   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                    <button class="dropdown-item d-flex align-items-center" @click="deleteComment(post, comment.id)">
+                    <a href="" class="dropdown-item d-flex align-items-center" @click="deleteComment(post, comment.id)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-meh icon-sm mr-2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="8" y1="15" x2="16" y2="15"></line>
                         <line x1="9" y1="9" x2="9.01" y2="9"></line>
                         <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                      </svg> <span class="">Obrisi</span></button>
-                    <button class="dropdown-item d-flex align-items-center" @click="changeComment(post, comment.id)">
+                      </svg> <span class="">Obrisi</span></a>
+                    <a href=""  class="dropdown-item d-flex align-items-center" @click="changeComment(post, comment.id)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-meh icon-sm mr-2">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="8" y1="15" x2="16" y2="15"></line>
                         <line x1="9" y1="9" x2="9.01" y2="9"></line>
                         <line x1="15" y1="9" x2="15.01" y2="9"></line>
-                      </svg> <span class="">Izmeni</span></button>
+                      </svg> <span class="">Izmeni</span></a>
                   </div>
                 </div>
               </div>
@@ -152,9 +152,9 @@ export default {
     },
     changeProfilePicture(){
       if(confirm("da li ste sigurni da zelite da promenite profilnu sliku?")){
-          axios.post('/changeProfilePhoto',{username:this.username, picture:this.post.picture}).then( () => {
+          axios.post('/changeProfilePhoto',this.post.picture).then( () => {
             this.closeModal()
-            this.$forceUpdate()
+            this.$router.go()
           }).catch(resp => {
             alert(resp.response.data.error)
           })

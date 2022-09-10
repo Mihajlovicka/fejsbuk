@@ -46,7 +46,19 @@ public class MessagesRepo {
 
     public ArrayList<Message> getByUsername(String username) {
         if(messages.containsKey(username)) return messages.get(username);
-        return null;
+        return new ArrayList<>();
+    }
+
+    public void addMessage(String sender, Message message) {
+        if(messages.containsKey(sender)){
+            messages.get(sender).add(message);
+        }
+        else{
+            ArrayList<Message> msg = new ArrayList<>();
+            msg.add(message);
+            messages.put(sender, msg);
+        }
+        saveAll();
     }
 
 }

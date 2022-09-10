@@ -1,36 +1,39 @@
 package beans;
 
-import javaxt.utils.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 
 public class Message {
-    private User sender;
-    private User receiver;
+    private String sender;
+    private String receiver;
     private String content;
+    @JsonFormat
+            (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date date;
 
     public Message() {
     }
 
-    public Message(User sender, User receiver, String content, Date date) {
+    public Message(String sender, String receiver, String content, Date date) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.date = date;
     }
 
-    public User getSender() {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public User getReceiver() {
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(User receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 

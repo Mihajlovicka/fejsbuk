@@ -15,6 +15,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.eclipse.jetty.websocket.api.Session;
 import repo.UsersRepo;
 import service.PostService;
 import service.UserService;
@@ -28,10 +29,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static spark.Spark.*;
 
@@ -41,6 +44,8 @@ public class SparkAppMain {
     static ObjectMapper objectMapper = new ObjectMapper();
     static UserService userService = new UserService();
     static PostService postService = new PostService();
+    public static Map<ArrayList<String>, Session> userUsernameMap = new ConcurrentHashMap<>();
+    public static int nextUserNumber = 1; //Used for creating the next username
 
     public static void main(String[] args) throws Exception {
         port(8080);
@@ -103,6 +108,8 @@ public class SparkAppMain {
             }
             return objectMapper.writeValueAsString(new_users);
         });
+
+
 
         get("/adminSearchUsers", (req, res) -> {
             res.status(200);
@@ -533,21 +540,6 @@ public class SparkAppMain {
             }
         });
 
-        get("/getMessages", (req, res) -> {
-            String id = req.queryParams("id");
-            try {
-                res.status(200);
-
-                return objectMapper.writeValueAsString(userService.getMessages(req.headers("Authorization")));
-            } catch (NotFound e) {
-                e.printStackTrace();
-                res.status(404);
-                ObjectNode error = objectMapper.createObjectNode();
-                error.put("error", "Korisnik nije pronadjen.");
-                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
-            }
-
-        });
 
         get("/getPosts", (req, res) -> {
             String username = req.queryParams("username");
@@ -676,6 +668,21 @@ public class SparkAppMain {
                 return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
             }
         });
+
+        get("/getMessages", (req, res) -> {
+            res.status(200);
+            String sender = req.queryParams("sender");
+            String receiver = req.queryParams("receiver");
+            try {
+
+                return objectMapper.writeValueAsString(userService.getMessages(sender, receiver));
+            } catch (Exception e) {
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Nesto se razjebalo");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
     }
 
     private static void enableCORS(final String origin, final String methods, final String headers) {
@@ -703,5 +710,18 @@ public class SparkAppMain {
             response.type("application/json; charset=utf-8");
         });
     }
-
+    public static void broadcastMessage(String sender,String receiver, String message) {
+        Session s = null;
+        for (ArrayList<String> user : userUsernameMap.keySet()) {
+            if (user.contains(sender) && user.contains(receiver)) {
+                s = userUsernameMap.get(user);
+            }
+        }
+        try {
+            userService.addMessage(sender, receiver, message);
+            s.getRemote().sendString(String.valueOf(sender + " :" + message));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
