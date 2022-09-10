@@ -7,6 +7,7 @@ import beans.User;
 import exceptions.NotFound;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import java.util.Date;
 import repo.PostRepo;
 import repo.UsersRepo;
 import spark.utils.IOUtils;
@@ -96,6 +97,29 @@ public class PostService {
         String username = deletingDesc.get("username");
         String id = deletingDesc.get("id");
         String desc = deletingDesc.get("description");
-        return postRepo.addDeletingDescription(username,id, desc);
+        return postRepo.addDeletingDescription(username, id, desc);
+    }
+
+    public void updatePost(Map<String, String> map, String auth) throws Exception {
+        User loged = userService.getLoggedInUser(auth);
+        String id = map.get("id");
+        String text = map.get("text");
+        Comment c = new Comment(loged, new Date(), text);
+        postRepo.addComment(id, c);
+    }
+
+    public void deleteComment(Map<String, String> map) throws NotFound {
+        String id = map.get("id");
+        getPost(id);
+        String commentId = map.get("commentId");
+        postRepo.deleteComment(id, commentId);
+    }
+
+    public void changeComment(Map<String, String> map) throws NotFound {
+        String id = map.get("id");
+        getPost(id);
+        String commentId = map.get("commentId");
+        String text = map.get("text");
+        postRepo.changeComment(id, commentId, text);
     }
 }

@@ -2,7 +2,7 @@ package repo;
 
 import beans.FriendshipRequest;
 import beans.Post;
-import beans.User;
+import beans.Comment;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -132,5 +132,77 @@ public class PostRepo {
             }
         }
 
+    }
+
+    public void addComment(String id, Comment c) {
+
+        String username = id.split(" ")[0];
+        if(this.posts.containsKey(username)){
+            ArrayList<Post> p = this.posts.get(username);
+            for(int i = 0; i < p.size(); i++){
+                if(p.get(i).getId().equals(id)){
+                    ArrayList<Comment> comments = p.get(i).getComments();
+                    c.setId(getIdComment(p.get(i).getId()));
+                    comments.add(c);
+                    posts.get(username).get(i).setComments(comments);
+                }
+            }
+        }
+        saveAll();
+
+    }
+
+
+    private int getIdComment(String postId){
+        while(true) {
+            boolean found = false;
+            int id = (new Random()).nextInt(9999);
+            for(Comment p: getById(postId).getComments()){
+                if(p.getId() == id){
+                    found = true;
+                }
+            }
+            if(!found) return id;
+        }
+    }
+
+    public void deleteComment(String id, String commentId) {
+        String username = id.split(" ")[0];
+        if(this.posts.containsKey(username)){
+            ArrayList<Post> p = this.posts.get(username);
+            for(int i = 0; i < p.size(); i++){
+                if(p.get(i).getId().equals(id)){
+                    ArrayList<Comment> comments = p.get(i).getComments();
+                    for(int j = 0; j< comments.size(); j++){
+                        if(comments.get(j).getId() == Integer.parseInt(commentId)){
+                            posts.get(username).get(i).getComments().get(j).setDeleted(true);
+                        }
+                    }
+
+                }
+            }
+        }
+        saveAll();
+
+    }
+
+    public void changeComment(String id, String commentId, String text) {
+        String username = id.split(" ")[0];
+        if(this.posts.containsKey(username)){
+            ArrayList<Post> p = this.posts.get(username);
+            for(int i = 0; i < p.size(); i++){
+                if(p.get(i).getId().equals(id)){
+                    ArrayList<Comment> comments = p.get(i).getComments();
+                    for(int j = 0; j< comments.size(); j++){
+                        if(comments.get(j).getId() == Integer.parseInt(commentId)){
+                            posts.get(username).get(i).getComments().get(j).setText(text);
+                            posts.get(username).get(i).getComments().get(j).setChangeDate(new Date());
+                        }
+                    }
+
+                }
+            }
+        }
+        saveAll();
     }
 }

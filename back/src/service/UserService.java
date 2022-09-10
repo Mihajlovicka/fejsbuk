@@ -1,6 +1,7 @@
 package service;
 
 import beans.FriendshipRequest;
+import beans.Message;
 import beans.RequestState;
 import beans.User;
 import exceptions.NotFound;
@@ -11,6 +12,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import repo.FriendshipRequestsRepo;
+import repo.MessagesRepo;
 import repo.UsersRepo;
 import spark.utils.IOUtils;
 
@@ -26,6 +28,7 @@ import java.util.*;
 
 public class UserService {
     private static UsersRepo usersRepo = new UsersRepo();
+    private static MessagesRepo messagesRepo = new MessagesRepo();
     private static FriendshipRequestsRepo friendshipRequestsRepo = new FriendshipRequestsRepo();
     static Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
@@ -278,4 +281,8 @@ public class UserService {
         return usersRepo.unblockUser(u);
     }
 
+    public Map<String, ArrayList<Message>> getMessages(String authorization) throws Exception {
+       User u = getLoggedInUser(authorization);
+       return messagesRepo.getAll();
+    }
 }

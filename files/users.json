@@ -1,1 +1,60 @@
-[{"username":"msara","password":"123","email":"saram@gmail.com","name":"sara","surname":"milovanovic","birthDate":"17-08-2000","sex":"n","role":"admin","profilePicture":"IMG_1801 pano2.jpg","posts":[],"pictures":[],"friendshipRequests":[],"friendships":["sss"],"blocked":false,"profilePrivate":true,"token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtc2FyYSIsImV4cCI6MTY2Mjc3MjE0OSwiaWF0IjoxNjYyNzU0MTQ5fQ.9t8YRBciJbIMMH68xV4VQQYl_LOnP3Sjt89xkgFy1Wo"},{"username":"sss","password":"s","email":"sara@gmail.com","name":"sara","surname":"ristic","birthDate":"21-09-2022","sex":"n","role":"user","profilePicture":null,"posts":null,"pictures":null,"friendshipRequests":[],"friendships":["msara"],"blocked":false,"profilePrivate":false,"token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzc3MiLCJleHAiOjE2NjI3NzIxNTcsImlhdCI6MTY2Mjc1NDE1N30.8l3eJL0EnbCVpBeqasBhnNQEal6aTkXVYQS2jPpn96A"},{"username":"s","password":"s","email":"ss@gmil.vom","name":"s","surname":"s","birthDate":"21-09-2022","sex":"n","role":"user","profilePicture":"","posts":null,"pictures":null,"friendshipRequests":null,"friendships":[],"blocked":false,"profilePrivate":false,"token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzIiwiZXhwIjoxNjYyNzc0NDg1LCJpYXQiOjE2NjI3NTY0ODV9.A-xiMXyOvypE0i8Xs6-WCpKtSFJTgTO8T85cIiflAfE"}]
+[
+  {
+    "username": "msara",
+    "password": "123",
+    "email": "saram@gmail.com",
+    "name": "sara",
+    "surname": "milovanovic",
+    "birthDate": "17-08-2000",
+    "sex": "n",
+    "role": "admin",
+    "profilePicture": "IMG_1801 pano2.jpg",
+    "posts": [],
+    "pictures": [],
+    "friendshipRequests": [],
+    "friendships": [
+      "sss"
+    ],
+    "blocked": false,
+    "profilePrivate": true,
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtc2FyYSIsImV4cCI6MTY2Mjc3MjE0OSwiaWF0IjoxNjYyNzU0MTQ5fQ.9t8YRBciJbIMMH68xV4VQQYl_LOnP3Sjt89xkgFy1Wo"
+  },
+  {
+    "username": "sss",
+    "password": "s",
+    "email": "sara@gmail.com",
+    "name": "sara",
+    "surname": "ristic",
+    "birthDate": "21-09-2022",
+    "sex": "n",
+    "role": "user",
+    "profilePicture": null,
+    "posts": null,
+    "pictures": null,
+    "friendshipRequests": [],
+    "friendships": [
+      "msara"
+    ],
+    "blocked": false,
+    "profilePrivate": false,
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzc3MiLCJleHAiOjE2NjI3NzIxNTcsImlhdCI6MTY2Mjc1NDE1N30.8l3eJL0EnbCVpBeqasBhnNQEal6aTkXVYQS2jPpn96A"
+  },
+  {
+    "username": "s",
+    "password": "s",
+    "email": "ss@gmil.vom",
+    "name": "s",
+    "surname": "s",
+    "birthDate": "21-09-2022",
+    "sex": "n",
+    "role": "user",
+    "profilePicture": "",
+    "posts": null,
+    "pictures": null,
+    "friendshipRequests": null,
+    "friendships": [],
+    "blocked": false,
+    "profilePrivate": false,
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzIiwiZXhwIjoxNjYyNzc0NDg1LCJpYXQiOjE2NjI3NTY0ODV9.A-xiMXyOvypE0i8Xs6-WCpKtSFJTgTO8T85cIiflAfE"
+  }
+]

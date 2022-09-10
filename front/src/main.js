@@ -18,6 +18,7 @@ import FriendRequestsView from "@/components/FriendRequestsView";
 import FriendsView from "@/components/FriendsView";
 import UsersViewAdmin from "@/components/UsersViewAdmin";
 import UserPosts from "@/components/UserPosts";
+import DirectMessages from "@/components/DirectMessages";
 
 
 Vue.config.productionTip = false
@@ -26,6 +27,7 @@ Vue.use(VueRouter);
 const routes = [
   {path:'/login', component: LogIn},
   {path:'/homepage', component: HomePage},
+  {path:'/directMessages', name:'directMessages', component: DirectMessages},
 
   {path:'/userSearch', component: UserSearchResult, name:'userSearch', props:true},
   {path:'/userProfile/:username', component: UserProfile, name:'userProfile', props:true},

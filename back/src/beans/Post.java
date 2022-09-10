@@ -6,7 +6,7 @@ public class Post {
     private String id;
     private String picture;
     private String description;
-    private ArrayList<Comment> comments;
+    private ArrayList<Comment> comments = new ArrayList<>();
     private boolean deleted = false;
     private String deletingDescription;
 

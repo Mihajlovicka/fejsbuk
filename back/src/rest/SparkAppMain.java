@@ -20,6 +20,7 @@ import service.PostService;
 import service.UserService;
 import spark.Filter;
 import spark.utils.IOUtils;
+import ws.WsHandler;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Part;
@@ -43,7 +44,10 @@ public class SparkAppMain {
 
     public static void main(String[] args) throws Exception {
         port(8080);
+
+        webSocket("/ws", WsHandler.class);
         enableCORS("*", "*", "*");
+
 
 
         get("/getAllUsers", (req, res) -> {
@@ -529,6 +533,22 @@ public class SparkAppMain {
             }
         });
 
+        get("/getMessages", (req, res) -> {
+            String id = req.queryParams("id");
+            try {
+                res.status(200);
+
+                return objectMapper.writeValueAsString(userService.getMessages(req.headers("Authorization")));
+            } catch (NotFound e) {
+                e.printStackTrace();
+                res.status(404);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+
+        });
+
         get("/getPosts", (req, res) -> {
             String username = req.queryParams("username");
             try {
@@ -593,6 +613,69 @@ public class SparkAppMain {
             }
 
         });
+
+        post("/updatePost", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            Map<String, String> map
+                    = objectMapper.readValue(payload, new TypeReference<Map<String, String>>() {
+            });
+            try {
+                postService.updatePost(map, req.headers("Authorization"));
+                res.status(200);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("succes", "Uspeh.");
+                return objectMapper.writeValueAsString(error);
+            } catch (NotFound e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
+        post("/changeComment", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            Map<String, String> map
+                    = objectMapper.readValue(payload, new TypeReference<Map<String, String>>() {
+            });
+            try {
+                postService.changeComment(map);
+                res.status(200);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("succes", "Uspeh.");
+                return objectMapper.writeValueAsString(error);
+            } catch (NotFound e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
+
+        post("/deleteComment", (req, res) -> {
+            res.type("application/json");
+            String payload = req.body();
+            Map<String, String> map
+                    = objectMapper.readValue(payload, new TypeReference<Map<String, String>>() {
+            });
+            try {
+                postService.deleteComment(map);
+                res.status(200);
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("succes", "Uspeh.");
+                return objectMapper.writeValueAsString(error);
+            } catch (NotFound e) {
+                res.status(404);
+                e.printStackTrace();
+                ObjectNode error = objectMapper.createObjectNode();
+                error.put("error", "Korisnik nije pronadjen.");
+                return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(error);
+            }
+        });
     }
 
     private static void enableCORS(final String origin, final String methods, final String headers) {
@@ -617,7 +700,7 @@ public class SparkAppMain {
             response.header("Access-Control-Request-Method", methods);
             response.header("Access-Control-Allow-Headers", headers);
             // Note: this may or may not be necessary in your particular application
-            response.type("application/json");
+            response.type("application/json; charset=utf-8");
         });
     }
 

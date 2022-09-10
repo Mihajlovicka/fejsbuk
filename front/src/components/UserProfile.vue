@@ -208,6 +208,50 @@
 
         </div>
         <div class="description"><h5>{{post.description}}</h5></div>
+
+        <div class="komentari">
+
+          <div class="container justify-content-center mt-5 border-left border-right">
+            <div class="d-flex justify-content-center pt-3 pb-2" v-if="logged_username != ''">
+              <input type="text" name="text" placeholder="+ nov komentar" class="form-control addtxt" v-model="newCommentText">
+              <button class="btn btn-icon btn-outline-primary" @click="newComment(post)">Posalji komentar</button>
+            </div>
+            <div  class="d-flex justify-content-center py-2" v-for="comment in post.comments" :key="comment">
+              <div class="second py-2 px-2" v-if="!comment.deleted">
+                <div class="d-flex justify-content-between py-1 pt-2">
+                  <div>
+                    <span class="text2">{{comment.username.name}} {{comment.username.surname}}</span></div>
+                </div>
+                <span class="text1" >{{comment.text}}</span>
+                <div v-if="comment.username.username == logged_username" class="dropdown">
+                  <button class="btn p-0" type="button" id="dropdownMenuButton3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal icon-lg pb-3px">
+                      <circle cx="12" cy="12" r="1"></circle>
+                      <circle cx="19" cy="12" r="1"></circle>
+                      <circle cx="5" cy="12" r="1"></circle>
+                    </svg>
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                    <button class="dropdown-item d-flex align-items-center" @click="deleteComment(post, comment.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-meh icon-sm mr-2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="8" y1="15" x2="16" y2="15"></line>
+                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                      </svg> <span class="">Obrisi</span></button>
+                    <button class="dropdown-item d-flex align-items-center" @click="changeComment(post, comment.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-meh icon-sm mr-2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="8" y1="15" x2="16" y2="15"></line>
+                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                      </svg> <span class="">Izmeni</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -245,6 +289,7 @@ export default {
       recievedRequests:[],
       friends:[],
       isLogged: false,
+      newCommentText:''
     }
   },
   computed : {
@@ -397,7 +442,38 @@ export default {
         document.getElementById("menu_nav_items").children[i].classList.remove('active');
       }
       document.getElementById("menu_nav_items").children[activeComponent].classList.add('active');
-    }
+    },
+
+    newComment(post){
+      axios.post('/updatePost',{id:post.id,text:this.newCommentText}).then(() => {
+        alert("Uspesno poslat komentar.")
+      }).catch(resp => {
+        alert(resp.response.data.error)
+      })
+      this.$router.go()
+    },
+    deleteComment(post, commentId){
+      axios.post('/deleteComment',{id:post.id,commentId:commentId}).then(() => {
+        alert("Uspesno brisanje komentara.")
+      }).catch(resp => {
+        alert(resp.response.data.error)
+      })
+      this.$router.go()
+    },
+    changeComment(post, commentId){
+      let commentText = prompt("Nov tekst komentara:", "tekst");
+
+      if (commentText == null || commentText == '') {
+        alert("Niste uneli nista.")
+        return
+      }
+      axios.post('/changeComment',{id:post.id,commentId:commentId, text:commentText}).then(() => {
+        alert("Uspesna izmena.")
+      }).catch(resp => {
+        alert(resp.response.data.error)
+      })
+      this.$router.go()
+    },
   },
   created() {
     this.hideProfile = true;
@@ -718,5 +794,66 @@ img {
   height: 30vh;
   margin-top: 50px;
   left: 0;
+}
+
+
+
+.addtxt{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+  font-size: 13px;
+  width: 350px;
+  background-color: #e5e8ed;
+  font-weight: 500;
+}
+.form-control:focus{
+  color: #000;
+}
+.second{
+  width: 350px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 5px 5px 5px #aaaaaa;
+}
+.text1{
+  font-size: 15px;
+  font-weight: 500;
+  color: #56575b;
+}
+.text2{
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 6px;
+  color: #56575b;
+}
+.text3{
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 4px;
+  color: #828386;
+}
+.text3o{
+  color: #00a5f4;
+
+}
+.text4{
+  font-size: 13px;
+  font-weight: 500;
+  color: #828386;
+}
+.text4i{
+  color: #00a5f4;
+}
+.text4o{
+  color: white;
+}
+.thumbup{
+  font-size: 13px;
+  font-weight: 500;
+  margin-right: 5px;
+}
+.thumbupo{
+  color: #17a2b8;
 }
 </style>
